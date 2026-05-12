@@ -1720,7 +1720,16 @@ MonoBehaviour:
   - {fileID: 1838817385}
   - {fileID: 1620972586}
   - {fileID: 475314002}
-  _playerBlots: []
+  _playerBlots:
+  - {fileID: 1509192838}
+  - {fileID: 1342988019}
+  - {fileID: 1838817385}
+  - {fileID: 1620972586}
+  - {fileID: 475314002}
+  _targetPointRadiusMultiplier: 0.3
+  _minDistanceBetweenBlots: 0.75
+  _navMeshSampleDistance: 1.5
+  _maxAttemptsPerBlot: 30
 --- !u!224 &1838817384 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 294702877576910832}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: Blot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 4.5}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4769575997467739776
 Canvas:
@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 7901569547257787972}
   m_Layer: 0
   m_Name: Blot
-  m_TagString: Untagged
+  m_TagString: Blot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131,7 +131,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4929190864631161729}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 4.91916}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
@@ -235,10 +235,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9f4c13a21aba4e3fa3a3cc89763f7c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Blots.Blot
-  _speed: 1
-  _isMoving: 0
-  _blotCanvas: {fileID: 4769575997467739776}
+  _speed: 2.5
+  _acceleration: 1
   _navMeshAgent: {fileID: 0}
+  _windPushStrength: 0.5
+  _minimumSpeedMultiplier: 0.35
+  _inFanAreaOfEffect: 0
 --- !u!65 &7901569547257787972
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -273,7 +275,7 @@ GameObject:
   - component: {fileID: 5387972363297926070}
   m_Layer: 5
   m_Name: Image
-  m_TagString: Untagged
+  m_TagString: Blot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
