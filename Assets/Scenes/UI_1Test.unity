@@ -427,6 +427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c308e5a3def9149ec9d5f964872f2be3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManagement.GameManager
+  _currentLevel: {fileID: 0}
   _blotsInLevel:
   - {fileID: 1034827160}
   - {fileID: 1148155107}
@@ -1163,7 +1164,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraControls
   _tiltLeftAction: {fileID: -3785587957188696671, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _tiltRightAction: {fileID: 7437971603237108018, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  _dezoomAction: {fileID: 6987044748781282110, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  _zoomAction: {fileID: -1409740434122173208, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _tiltStrength: 4
+  _dezoomStrength: 3
 --- !u!4 &1427413851
 Transform:
   m_ObjectHideFlags: 0

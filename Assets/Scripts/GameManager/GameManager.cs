@@ -7,6 +7,9 @@ namespace GameManagement
 {
     public class GameManager : MonoBehaviour
     {
+        [Header("Level Management")]
+        [SerializeField] private GameLevel _currentLevel;
+
         [SerializeField] private List<Blot> _blotsInLevel;
         [SerializeField] private List<Blot> _playerBlots;
 
@@ -164,6 +167,24 @@ namespace GameManagement
             }
 
             return true;
+        }
+
+        #endregion
+    
+        #region Level Management
+
+        private void StartLevel()
+        {
+            _blotsInLevel.Clear();
+            _playerBlots.Clear();
+
+            _blotsInLevel.AddRange(_currentLevel.BlotsInLevel);
+            _playerBlots.AddRange(_currentLevel.StartingBlots);
+
+            foreach (Blot blot in _playerBlots)
+            {
+                blot.InitializeBlot();
+            }
         }
 
         #endregion
