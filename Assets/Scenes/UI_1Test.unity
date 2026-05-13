@@ -351,7 +351,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -4.25
+      value: -0.83
       objectReference: {fileID: 0}
     - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -427,7 +427,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c308e5a3def9149ec9d5f964872f2be3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManagement.GameManager
-  _currentLevel: {fileID: 0}
   _blotsInLevel:
   - {fileID: 1034827160}
   - {fileID: 1148155107}
@@ -470,6 +469,7 @@ GameObject:
   - component: {fileID: 850262575}
   - component: {fileID: 850262574}
   - component: {fileID: 850262577}
+  - component: {fileID: 850262578}
   m_Layer: 0
   m_Name: GroundTargetIndicator
   m_TagString: Untagged
@@ -507,7 +507,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -598,6 +598,33 @@ MonoBehaviour:
   _groundProbeDist: 30
   _snapToNavMesh: 1
   _navMeshSampleRadius: 1
+--- !u!54 &850262578
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850262572}
+  serializedVersion: 5
+  m_Mass: 0.0000001
+  m_LinearDamping: 0
+  m_AngularDamping: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &881617827
 GameObject:
   m_ObjectHideFlags: 0
@@ -965,7 +992,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -1.19
+      value: -9.49
       objectReference: {fileID: 0}
     - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1090,7 +1117,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1.11
+      value: 3.63
       objectReference: {fileID: 0}
     - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1228,7 +1255,19 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents:
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1592239643}
+        m_TargetAssemblyTypeName: Player.PlayerControls, Assembly-CSharp
+        m_MethodName: OnInteractWithTarget
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 852140f2-7766-474d-8707-702459ba45f3
     m_ActionName: 'Player/Interact[/Keyboard/e,/DualSenseGamepadHID1/buttonNorth]'
   - m_PersistentCalls:
@@ -1288,19 +1327,7 @@ MonoBehaviour:
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1592239643}
-        m_TargetAssemblyTypeName: Player.PlayerControls, Assembly-CSharp
-        m_MethodName: OnTiltCameraLeft
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: d2f2b1c6-eedc-4918-ada9-b9268fd4ca13
     m_ActionName: 'Player/CameraTiltLeft[/DualSenseGamepadHID1/leftShoulder,/Keyboard/a]'
   - m_PersistentCalls:
@@ -1311,6 +1338,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: fe02de22-0f85-4801-b7bf-4b792124326f
     m_ActionName: 'Player/MoveIndicator[/DualSenseGamepadHID1/leftStick,/Mouse/delta]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 15fcfd2d-206c-417c-9022-199429c19395
+    m_ActionName: 'Player/CameraDezoom[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f9b25bb1-a8bd-4b62-9d1a-b7cb9ff3767b
+    m_ActionName: 'Player/CameraZoom[/Keyboard/ctrl]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: 
@@ -1490,6 +1525,57 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1838705153}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1859055003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1859055005}
+  - component: {fileID: 1859055004}
+  m_Layer: 0
+  m_Name: LevelData
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1859055004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859055003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 142ff269f141c4a0eb69f4ac99d49c74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManagement.GameLevel
+  _blotsInLevel:
+  - {fileID: 1034827160}
+  - {fileID: 1148155107}
+  - {fileID: 1885224762}
+  - {fileID: 746118962}
+  _startingBlots:
+  - {fileID: 1034827160}
+--- !u!4 &1859055005
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859055003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.66909, y: -1.23107, z: 8.79541}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1885224760
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1560,7 +1646,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -2.13
+      value: 8.17
       objectReference: {fileID: 0}
     - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1614,3 +1700,4 @@ SceneRoots:
   - {fileID: 304685904}
   - {fileID: 761168507}
   - {fileID: 1427413851}
+  - {fileID: 1859055005}

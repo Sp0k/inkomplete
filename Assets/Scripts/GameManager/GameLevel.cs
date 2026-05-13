@@ -11,5 +11,15 @@ namespace GameManagement
 
         [SerializeField] private List<Blot> _startingBlots;
         public List<Blot> StartingBlots => _startingBlots;
+
+        #region Unity Functions
+        
+        private void Start()
+        {
+            GameManager.Instance.CurrentLevel = this;
+            GameManager.Instance.StartLevel();
+        }
+
+        #endregion
     }
 }

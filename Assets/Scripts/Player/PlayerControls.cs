@@ -11,26 +11,26 @@ namespace Player
 
         public void OnMoveTarget(InputAction.CallbackContext context)
         {
-            if (!context.performed)
-            {
-                return;
-            }
+            if (!context.performed) return;
 
-            if (_groundIndicator == null || !_groundIndicator.HasValidTarget)
-            {
-                return;
-            }
+            if (_groundIndicator == null || !_groundIndicator.HasValidTarget || GameManager.Instance.HighlightedObject != null) return;
 
             Vector3 targetPosition = _groundIndicator.CurrentTargetPosition;
 
-            if (targetPosition == prevPos)
-            {
-                return;
-            }
+            if (targetPosition == prevPos) return;
 
             prevPos = targetPosition;
 
             GameManager.Instance.MovePlayerBlots(targetPosition);
+        }
+
+        public void OnInteractWithTarget(InputAction.CallbackContext context)
+        {
+            if (!context.performed) return;
+
+            if (GameManager.Instance.HighlightedObject == null) return;
+
+            GameManager.Instance.HighlightedObject.Interact();
         }
     }
 }

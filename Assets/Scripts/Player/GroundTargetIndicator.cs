@@ -1,3 +1,6 @@
+using Blots;
+using GameManagement;
+using Interfaces;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -35,6 +38,8 @@ namespace Player
 
         private Renderer[] _renderers;
 
+        #region Unity Function
+
         private void Awake()
         {
             if (_camera == null)
@@ -69,6 +74,41 @@ namespace Player
             MoveIndicatorFromInput();
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (GameManager.Instance.HighlightedObject != null) return;
+
+            if (other.TryGetComponent<IInteractable>(out IInteractable interactable))
+            {
+                if (other.TryGetComponent<Blot>(out Blot blot))
+                {
+                    if (!blot.CurrentState.Equals(BlotState.Lost)) return;
+                }
+
+                if (!GameManager.Instance.SetHighlightedObject(interactable)) return;
+                Vector3 currentScale = transform.localScale;
+                Vector3 resize = new (currentScale.x * 2, currentScale.y, currentScale.z * 2);
+                transform.localScale = resize;
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (GameManager.Instance.HighlightedObject == null) return;
+
+            if (other.TryGetComponent<IInteractable>(out IInteractable interactable) && interactable == GameManager.Instance.HighlightedObject)
+            {
+                if (!GameManager.Instance.ClearHighlightedObject()) return;
+                Vector3 currentScale = transform.localScale;
+                Vector3 resize = new (currentScale.x / 2, currentScale.y, currentScale.z / 2);
+                transform.localScale = resize;
+            }
+        }
+
+        #endregion
+
+        #region Indicator Movement Functions
+        
         private void MoveIndicatorFromInput()
         {
             if (_camera == null || _moveIndicatorAction == null)
@@ -116,6 +156,7 @@ namespace Player
 
             SetIndicatorPosition(clampedPosition);
         }
+
 
         private float GetMoveAmount()
         {
@@ -260,8 +301,9 @@ namespace Player
             foreach (Renderer renderer in _renderers)
             {
                 renderer.enabled = visible;
-                renderer.sortingOrder = visible ? 1 : -1;
             }
         }
+
+        #endregion
     }
 }

@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using GameManagement;
+using Interfaces;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -21,7 +24,7 @@ namespace Blots
     }
 
     [RequireComponent(typeof(NavMeshAgent))]
-    public class Blot : MonoBehaviour
+    public class Blot : MonoBehaviour, IInteractable
     {
         [Header("Blot Movement")]
         [SerializeField] private float _speed = 5f;
@@ -40,6 +43,7 @@ namespace Blots
         [SerializeField] private List<BlotState> _blotStates;
         [SerializeField] private RectTransform _blotImageRect;
         [SerializeField] private float _flipThreshold = 0.001f;
+        [SerializeField] private quaternion _baseImageRotation;
         private Image _blotImage;
         private Dictionary<BlotState, SineParams> _sineAnimParams = new();
 
@@ -58,6 +62,11 @@ namespace Blots
                 {
                     _blotImageRect = _blotImage.GetComponent<RectTransform>();
                 }
+
+                if (_blotImageRect != null)
+                {
+                    _baseImageRotation = _blotImageRect.localRotation;
+                }
             }
 
             _previousPosition = transform.position;
@@ -68,7 +77,8 @@ namespace Blots
             _sineAnimParams = new()
             {
                 { BlotState.Idle, new SineParams(2f, 0.9f, 1.0f) },
-                { BlotState.Moving, new SineParams(4f, 0.8f, 1.1f) }
+                { BlotState.Moving, new SineParams(4f, 0.8f, 1.1f) },
+                { BlotState.Lost, new SineParams(4f, -6f, 6f)}
             };
         }
 
@@ -152,7 +162,8 @@ namespace Blots
             if (xMovement > 0f)
             {
                 scale.x = Mathf.Abs(scale.x);
-            } else
+            }
+            else
             {
                 scale.x = -Mathf.Abs(scale.x);
             }
@@ -181,6 +192,24 @@ namespace Blots
                 normalizedSin
             );
 
+            if (CurrentState.Equals(BlotState.Lost))
+            {
+                HandleRotation(scaleValue);
+            }
+            else
+            {
+                HandleScaling(scaleValue);
+            }
+
+        }
+
+        private void HandleRotation(float rotationValue)
+        {
+            _blotImageRect.localRotation = _baseImageRotation * Quaternion.Euler(0f, 0f, rotationValue);
+        }
+
+        private void HandleScaling(float scaleValue)
+        {
             Vector3 currentScale = _blotImageRect.localScale;
 
             float xDirection = currentScale.x < 0f ? -1f : 1f;
@@ -190,6 +219,18 @@ namespace Blots
                 currentScale.y,
                 currentScale.z
             );
+        }
+
+        #endregion
+
+        #region Interaction
+
+        public void Interact()
+        {
+            if (CurrentState.Equals(BlotState.Lost))
+            {
+                RecruitBlot();
+            }
         }
 
         #endregion
