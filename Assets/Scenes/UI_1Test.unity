@@ -427,6 +427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c308e5a3def9149ec9d5f964872f2be3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManagement.GameManager
+  _currentLevel: {fileID: 0}
   _blotsInLevel:
   - {fileID: 1034827160}
   - {fileID: 1148155107}
