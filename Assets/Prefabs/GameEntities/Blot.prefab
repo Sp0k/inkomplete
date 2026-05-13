@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9f4c13a21aba4e3fa3a3cc89763f7c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Blots.Blot
-  _speed: 1
+  _speed: 2.5
   _isMoving: 0
   _blotCanvas: {fileID: 4769575997467739776}
   _navMeshAgent: {fileID: 0}

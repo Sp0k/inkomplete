@@ -6,30 +6,31 @@ namespace Player
 {
     public class PlayerControls : MonoBehaviour
     {
+        [SerializeField] private GroundTargetIndicator _groundIndicator;
         private Vector3 prevPos = Vector3.zero;
 
-        public void OnLeftClick(InputAction.CallbackContext context)
+        public void OnMoveTarget(InputAction.CallbackContext context)
         {
             if (!context.performed)
             {
                 return;
             }
 
-            Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (_groundIndicator == null || !_groundIndicator.HasValidTarget)
             {
-                Vector3 targetPosition = hit.point;
-                if (targetPosition == prevPos)
-                {
-                    return;
-                }
-
-                transform.position = targetPosition;
-                prevPos = targetPosition;
-
-                GameManager.Instance.MovePlayerBlots(targetPosition);
+                return;
             }
+
+            Vector3 targetPosition = _groundIndicator.CurrentTargetPosition;
+
+            if (targetPosition == prevPos)
+            {
+                return;
+            }
+
+            prevPos = targetPosition;
+
+            GameManager.Instance.MovePlayerBlots(targetPosition);
         }
     }
 }
