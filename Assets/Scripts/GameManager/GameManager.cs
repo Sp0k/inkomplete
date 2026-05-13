@@ -1,17 +1,21 @@
 using Blots;
+using Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 
 namespace GameManagement
 {
     public class GameManager : MonoBehaviour
     {
         [Header("Level Management")]
-        [SerializeField] private GameLevel _currentLevel;
-
+        public GameLevel CurrentLevel { get; set; }
         [SerializeField] private List<Blot> _blotsInLevel;
         [SerializeField] private List<Blot> _playerBlots;
+
+        [Header("Input")]
+        public IInteractable HighlightedObject { get; private set; }
 
         [Header("Group Movement")]
         [SerializeField] private float _targetPointRadiusMultiplier = 0.3f;
@@ -173,18 +177,41 @@ namespace GameManagement
     
         #region Level Management
 
-        private void StartLevel()
+        public void StartLevel()
         {
             _blotsInLevel.Clear();
             _playerBlots.Clear();
 
-            _blotsInLevel.AddRange(_currentLevel.BlotsInLevel);
-            _playerBlots.AddRange(_currentLevel.StartingBlots);
-
-            foreach (Blot blot in _playerBlots)
+            _blotsInLevel.AddRange(CurrentLevel.BlotsInLevel);
+            foreach (Blot blot in _blotsInLevel)
             {
                 blot.InitializeBlot();
             }
+
+            foreach (Blot blot in CurrentLevel.StartingBlots)
+            {
+                blot.RecruitBlot();
+            }
+        }
+
+        #endregion
+
+        #region Interaction
+
+        public bool SetHighlightedObject(IInteractable interactable)
+        {
+            if (HighlightedObject != null) return false;
+
+            HighlightedObject = interactable;
+            return true;
+        }
+
+        public bool ClearHighlightedObject()
+        {
+            if (HighlightedObject == null) return false;
+
+            HighlightedObject = null;
+            return true;
         }
 
         #endregion
