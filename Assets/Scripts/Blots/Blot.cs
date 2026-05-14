@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using GameManagement;
 using Interfaces;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -46,6 +45,9 @@ namespace Blots
         [SerializeField] private quaternion _baseImageRotation;
         private Image _blotImage;
         private Dictionary<BlotState, SineParams> _sineAnimParams = new();
+
+        [Header("Blot Sounds")]
+        [SerializeField] private List<string> _sfxRefs;
 
         #region Unity Functions
 
@@ -99,6 +101,14 @@ namespace Blots
             _previousPosition = transform.position;
         }
 
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.CompareTag("Blot"))
+            {
+                Physics.IgnoreCollision(collision.collider, gameObject.GetComponent<BoxCollider>());
+            }
+        }
+
         #endregion
 
         #region Blot Functions
@@ -121,12 +131,14 @@ namespace Blots
 
             _navMeshAgent.SetDestination(targetPosition);
             CurrentState = BlotState.Moving;
+            AudioManager.Instance.PlaySfx(_sfxRefs[0], true, true);
         }
 
         public void RecruitBlot()
         {
             Recruited = true;
             CurrentState = BlotState.Idle;
+            _blotImageRect.localRotation = _baseImageRotation;
             GameManager.Instance.PlayerBlots.Add(this);
         }
 

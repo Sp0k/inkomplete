@@ -250,6 +250,14 @@ MonoBehaviour:
   _blotStates: 0000000001000000020000000300000004000000050000000600000007000000
   _blotImageRect: {fileID: 0}
   _flipThreshold: 0.001
+  _baseImageRotation:
+    value:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  _sfxRefs:
+  - blot_cry_1
 --- !u!65 &7901569547257787972
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -336,7 +344,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: be4fe9234afe248198e0a96084f383d7, type: 3}
+  m_Sprite: {fileID: 244311761, guid: e67433646051042e8b494c1a16507971, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
