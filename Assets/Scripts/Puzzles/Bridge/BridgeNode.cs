@@ -82,66 +82,52 @@ public class BridgeNode : MonoBehaviour
 
     IEnumerator LerpBlob(Transform blob, Vector3 targetPos)
     {
-        float elapsed;
+        float speed = 5f; // units per second
 
-        // Move to bridge point
         Vector3 startPos = blob.position;
 
+        // Mid point
         Vector3 midTarget = transform.position;
         midTarget.y = startPos.y;
 
-        elapsed = 0f;
-
-        while (elapsed < moveDuration)
-        {
-            elapsed += Time.deltaTime;
-
-            float t = elapsed / moveDuration;
-
-            blob.position = Vector3.Lerp(startPos, midTarget, t);
-
-            yield return null;
-        }
-
-        blob.position = midTarget;
-
-        // Move to target wihout changing Y
-        startPos = blob.position;
-
+        // Flat target
         Vector3 flatTarget = targetPos;
         flatTarget.y = startPos.y;
 
-        elapsed = 0f;
+        // Distances
+        float dist1 = Vector3.Distance(startPos, midTarget);
+        float dist2 = Vector3.Distance(midTarget, flatTarget);
+        float dist3 = Vector3.Distance(flatTarget, targetPos);
 
-        while (elapsed < moveDuration)
+        yield return Move(blob, startPos, midTarget, dist1 / speed);
+        yield return Move(blob, midTarget, flatTarget, dist2 / speed);
+        yield return Move(blob, flatTarget, targetPos, dist3 / speed);
+    }
+
+    IEnumerator Move(Transform blob, Vector3 from, Vector3 to, float duration)
+    {
+        if (duration <= 0f)
+        {
+            blob.position = to;
+            yield break;
+        }
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
 
-            float t = elapsed / moveDuration;
+            float t = elapsed / duration;
 
-            blob.position = Vector3.Lerp(startPos, flatTarget, t);
+            // Smooth easing
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            blob.position = Vector3.Lerp(from, to, t);
 
             yield return null;
         }
 
-        blob.position = flatTarget;
-
-        // Move vertically to final Y
-        startPos = blob.position;
-
-        elapsed = 0f;
-
-        while (elapsed < moveDuration)
-        {
-            elapsed += Time.deltaTime;
-
-            float t = elapsed / moveDuration;
-
-            blob.position = Vector3.Lerp(startPos, targetPos, t);
-
-            yield return null;
-        }
-
-        blob.position = targetPos;
+        blob.position = to;
     }
 }

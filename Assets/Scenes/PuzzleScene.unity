@@ -1523,10 +1523,9 @@ MonoBehaviour:
   PlayerControls: {fileID: 712901696}
   surface: {fileID: 1679059137}
   bridgeGeometry: {fileID: 1989411038}
-  BlotsToTriggerBridgeUI: 0
-  DistanceForBlotToActivate: 1.2
-  moveDuration: 0.5
-  delayBetweenStarts: 0.3
+  DistanceForBlotToActivate: 1.3
+  moveDuration: 2.5
+  delayBetweenStarts: 1
 --- !u!224 &1342988018 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
