@@ -8,9 +8,16 @@ namespace Player
     {
         private Vector3 prevPos = Vector3.zero;
 
+        public bool CanClick = true;
+
         public void OnLeftClick(InputAction.CallbackContext context)
         {
             if (!context.performed)
+            {
+                return;
+            }
+
+            if (!CanClick)
             {
                 return;
             }
