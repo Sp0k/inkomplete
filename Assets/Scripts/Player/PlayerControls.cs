@@ -6,12 +6,15 @@ namespace Player
 {
     public class PlayerControls : MonoBehaviour
     {
+        public bool CanClick = true;
+
         [SerializeField] private GroundTargetIndicator _groundIndicator;
         private Vector3 prevPos = Vector3.zero;
 
         public void OnMoveTarget(InputAction.CallbackContext context)
         {
             if (!context.performed) return;
+            if (!CanClick) return;
 
             if (_groundIndicator == null || !_groundIndicator.HasValidTarget || GameManager.Instance.HighlightedObject != null) return;
 
