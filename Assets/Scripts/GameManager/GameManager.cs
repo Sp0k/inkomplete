@@ -22,6 +22,9 @@ namespace GameManagement
         [SerializeField] private float _navMeshSampleDistance = 1.5f;
         [SerializeField] private int _maxAttemptsPerBlot = 30;
 
+        [Header("UI Elements")]
+        [SerializeField] private BlotCounterWidget m_BlotCounter;
+
         public List<Blot> PlayerBlots => _playerBlots;
 
         private static GameManager _instance;
@@ -191,13 +194,25 @@ namespace GameManagement
             {
                 blot.RecruitBlot();
             }
+
+            m_BlotCounter.InitCounterText(CurrentLevel.StartingBlots.Count,
+                CurrentLevel.BlotsInLevel.Count);
         }
 
-        #endregion
+		#endregion
 
-        #region Interaction
+		#region UI Management
 
-        public bool SetHighlightedObject(IInteractable interactable)
+        public void UpdateBlotCount()
+        {
+            m_BlotCounter.UpdateCurrentCount(PlayerBlots.Count);
+		}
+
+		#endregion
+
+		#region Interaction
+
+		public bool SetHighlightedObject(IInteractable interactable)
         {
             if (HighlightedObject != null) return false;
 
