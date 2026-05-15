@@ -1,4 +1,5 @@
 using Blots;
+using Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,14 +8,22 @@ namespace GameManagement
 {
     public class GameManager : MonoBehaviour
     {
+        [Header("Level Management")]
+        public GameLevel CurrentLevel { get; set; }
         [SerializeField] private List<Blot> _blotsInLevel;
         [SerializeField] private List<Blot> _playerBlots;
+
+        [Header("Input")]
+        public IInteractable HighlightedObject { get; private set; }
 
         [Header("Group Movement")]
         [SerializeField] private float _targetPointRadiusMultiplier = 0.3f;
         [SerializeField] private float _minDistanceBetweenBlots = 0.75f;
         [SerializeField] private float _navMeshSampleDistance = 1.5f;
         [SerializeField] private int _maxAttemptsPerBlot = 30;
+
+        [Header("UI Elements")]
+        [SerializeField] private BlotCounterWidget m_BlotCounter;
 
         public List<Blot> PlayerBlots => _playerBlots;
 
@@ -163,6 +172,59 @@ namespace GameManagement
                 }
             }
 
+            return true;
+        }
+
+        #endregion
+    
+        #region Level Management
+
+        public void StartLevel()
+        {
+            _blotsInLevel.Clear();
+            _playerBlots.Clear();
+
+            _blotsInLevel.AddRange(CurrentLevel.BlotsInLevel);
+            foreach (Blot blot in _blotsInLevel)
+            {
+                blot.InitializeBlot();
+            }
+
+            foreach (Blot blot in CurrentLevel.StartingBlots)
+            {
+                blot.RecruitBlot();
+            }
+
+            m_BlotCounter.InitCounterText(CurrentLevel.StartingBlots.Count,
+                CurrentLevel.BlotsInLevel.Count);
+        }
+
+		#endregion
+
+		#region UI Management
+
+        public void UpdateBlotCount()
+        {
+            m_BlotCounter.UpdateCurrentCount(PlayerBlots.Count);
+		}
+
+		#endregion
+
+		#region Interaction
+
+		public bool SetHighlightedObject(IInteractable interactable)
+        {
+            if (HighlightedObject != null) return false;
+
+            HighlightedObject = interactable;
+            return true;
+        }
+
+        public bool ClearHighlightedObject()
+        {
+            if (HighlightedObject == null) return false;
+
+            HighlightedObject = null;
             return true;
         }
 
