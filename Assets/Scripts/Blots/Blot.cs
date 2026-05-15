@@ -245,6 +245,7 @@ namespace Blots
             if (CurrentState.Equals(BlotState.Lost))
             {
                 RecruitBlot();
+                GameManager.Instance.UpdateBlotCount();
             }
         }
 
