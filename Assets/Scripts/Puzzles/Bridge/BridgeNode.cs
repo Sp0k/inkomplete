@@ -16,25 +16,37 @@ public class BridgeNode : MonoBehaviour
     public GameManager GameManager;
     public PlayerControls PlayerControls;
 
-    public NavMeshSurface surface;
-    public GameObject bridgeGeometry;
+    public GameObject BridgeGeometry;
+    public Transform BridgeEnd;
     private List<Transform> _blotPoints;
 
-    public float DistanceForBlotToActivate;
+    public float DistanceForBlotToActivate = 1.5f;
+    private float _activationDistSquared;
+    public float DistanceForBlotToDeactivate = 0.5f;
+    private float _deactivationDistSquared;
 
-    public float moveDuration = 1f;
-    public float delayBetweenStarts = 0.3f;
+    public float CrossingSpeed = 10f;              // The time it takes for them to get to position
+    public float DelayBetweenBridgeBlots = 0.3f; // The time delay between each blot in the bridge
+    public float DelayBeforeCrossing = 1f;       // The time delay before the other blots start crossing
+    public float DelayBetweenBlots = 0.3f;       // The time delay before each blot not in the bridge 
 
-    private float _distSquared;
     private bool _isBridging;
+    private bool _canStartCrossing;
+    private bool _doneBridging;
+
+    private List<Blot> _bridgeBlots = new();
+    private List<Blot> _crossingBlots = new();
+    private List<Blot> _crossedBlots = new();
+    private float _originalY;
 
     void Start()
     {
-        _distSquared = DistanceForBlotToActivate * DistanceForBlotToActivate;
-        bridgeGeometry.SetActive(false);
+        _activationDistSquared = DistanceForBlotToActivate * DistanceForBlotToActivate;
+        _deactivationDistSquared = DistanceForBlotToDeactivate * DistanceForBlotToDeactivate;
+        BridgeGeometry.SetActive(false);
 
-        _blotPoints = bridgeGeometry.GetComponentsInChildren<Transform>()
-            .Where(t => t != bridgeGeometry.transform)
+        _blotPoints = BridgeGeometry.GetComponentsInChildren<Transform>()
+            .Where(t => t != BridgeGeometry.transform)
             .OrderBy(t =>
                 Mathf.Pow(transform.position.x - t.position.x, 2) +
                 Mathf.Pow(transform.position.z - t.position.z, 2))
@@ -46,9 +58,16 @@ public class BridgeNode : MonoBehaviour
 
     void Update()
     {
-        var distsSqrd = GameManager.PlayerBlots.Select(x => (x, Mathf.Pow(transform.position.x - x.transform.position.x, 2) + Mathf.Pow(transform.position.z - x.transform.position.z, 2)));
+        // Get distance data
+        var blotData = GameManager.PlayerBlots.Select(x => 
+            new BlotBridgeData() { 
+                Blot = x, 
+                StartDistanceSquared = Mathf.Pow(transform.position.x - x.transform.position.x, 2) + Mathf.Pow(transform.position.z - x.transform.position.z, 2),
+                EndDistanceSquared = Mathf.Pow(BridgeEnd.position.x - x.transform.position.x, 2) + Mathf.Pow(BridgeEnd.position.z - x.transform.position.z, 2),
+            });
 
-        if (distsSqrd.Count(x => x.Item2 < _distSquared) >= _blotPoints.Count)
+        // Bridge creation
+        if (blotData.Count(x => x.StartDistanceSquared < _activationDistSquared) >= _blotPoints.Count)
         {
             // TODO: Trigger Bridge on input
 
@@ -57,7 +76,7 @@ public class BridgeNode : MonoBehaviour
                 _isBridging = true;
 
                 PlayerControls.CanClick = false;
-                bridgeGeometry.SetActive(true);
+                BridgeGeometry.SetActive(true);
 
                 var firstPointPos = _blotPoints[0].position;
                 var closestBlots = GameManager.PlayerBlots
@@ -66,42 +85,135 @@ public class BridgeNode : MonoBehaviour
                         Mathf.Pow(firstPointPos.z - x.transform.position.z, 2))
                     .Take(_blotPoints.Count)
                     .ToList();
+                _bridgeBlots = closestBlots;
 
-                StartCoroutine(MoveBlots(closestBlots));
+                StartCoroutine(CreateBridge(closestBlots));
             }
         }
-    }
-    IEnumerator MoveBlots(List<Blot> blobs)
-    {
-        for (int i = 0; i < blobs.Count; i++)
+
+        // Bridge crossing
+        if (_canStartCrossing)
         {
-            StartCoroutine(LerpBlob(blobs[i].gameObject.GetComponentInChildren<Image>().transform, _blotPoints[i].position));
-            yield return new WaitForSeconds(delayBetweenStarts);
+            var leftoverBlotData = blotData.Where(x => !_bridgeBlots.Contains(x.Blot) && !_crossingBlots.Contains(x.Blot)).ToArray();
+            var blotsToCross = new List<Blot>();
+
+            foreach (BlotBridgeData blot in leftoverBlotData)
+            {
+                if (blot.StartDistanceSquared >= _activationDistSquared)
+                    blot.Blot.MoveBlot(transform.position);
+                else 
+                {
+                    blotsToCross.Add(blot.Blot);
+                    _crossingBlots.Add(blot.Blot);
+                }
+            }
+
+            if (blotsToCross.Count > 0)
+                StartCoroutine(CrossBridge(blotsToCross));
+        }
+
+        // Bridge creation
+        if (_isBridging && !_doneBridging && _crossedBlots.Count + _bridgeBlots.Count == GameManager.PlayerBlots.Count)
+        {
+            StartCoroutine(DestroyBridge(_bridgeBlots));
+            _doneBridging = true;
+            PlayerControls.CanClick = true;
+        }
+
+        // Reset nav mesh and colliders
+        foreach (BlotBridgeData blot in blotData.Where(x => !_crossedBlots.Contains(x.Blot)))
+        {
+            if (blot.EndDistanceSquared > _deactivationDistSquared)
+                continue;
+
+            var navAgent = blot.Blot.gameObject.GetComponent<NavMeshAgent>();
+            navAgent.enabled = true;
+            blot.Blot.gameObject.GetComponent<BoxCollider>().enabled = true;
+            blot.Blot.MoveBlot(BridgeEnd.position);
+
+            _crossedBlots.Add(blot.Blot);
         }
     }
 
-    IEnumerator LerpBlob(Transform blob, Vector3 targetPos)
+    IEnumerator CrossBridge(List<Blot> blots)
     {
-        float speed = 5f; // units per second
+        foreach (Blot blot in blots)
+        {
+            var navAgent = blot.gameObject.GetComponent<NavMeshAgent>();
+            navAgent.isStopped = true;
+            navAgent.enabled = false;
+            blot.gameObject.GetComponent<BoxCollider>().enabled = false;
 
-        Vector3 startPos = blob.position;
+            var blotTransform = blot.transform;
+            var blotPath = new List<Vector3>() {
+                    transform.position,
+                    new Vector3(_blotPoints[0].position.x, blotTransform.position.y, _blotPoints[0].position.z),
+                    new Vector3(BridgeEnd.position.x, blotTransform.position.y, BridgeEnd.position.z),
+                };
 
-        // Mid point
-        Vector3 midTarget = transform.position;
-        midTarget.y = startPos.y;
+            StartCoroutine(LerpBlotPath(blotTransform, blotPath));
+            yield return new WaitForSeconds(DelayBetweenBlots);
+        }
+    }
 
-        // Flat target
-        Vector3 flatTarget = targetPos;
-        flatTarget.y = startPos.y;
+    IEnumerator CreateBridge(List<Blot> bridgeBlots)
+    {
+        _originalY = bridgeBlots.First().transform.position.y;
 
-        // Distances
-        float dist1 = Vector3.Distance(startPos, midTarget);
-        float dist2 = Vector3.Distance(midTarget, flatTarget);
-        float dist3 = Vector3.Distance(flatTarget, targetPos);
+        for (int i = 0; i < bridgeBlots.Count; i++)
+        {
+            var navAgent = bridgeBlots[i].gameObject.GetComponent<NavMeshAgent>();
+            navAgent.isStopped = true;
+            navAgent.enabled = false;
+            bridgeBlots[i].gameObject.GetComponent<BoxCollider>().enabled = false;
 
-        yield return Move(blob, startPos, midTarget, dist1 / speed);
-        yield return Move(blob, midTarget, flatTarget, dist2 / speed);
-        yield return Move(blob, flatTarget, targetPos, dist3 / speed);
+            var blotTransform = bridgeBlots[i].transform;
+            var blotPath = new List<Vector3>() { 
+                transform.position, 
+                new Vector3(_blotPoints[i].position.x, blotTransform.position.y, _blotPoints[i].position.z), 
+                _blotPoints[i].position 
+            };
+
+            StartCoroutine(LerpBlotPath(blotTransform, blotPath));
+            yield return new WaitForSeconds(DelayBetweenBridgeBlots);
+        }
+
+        yield return new WaitForSeconds(DelayBeforeCrossing);
+        _canStartCrossing = true;
+    }
+
+    IEnumerator DestroyBridge(List<Blot> bridgeBlots)
+    {
+        var crossing = _crossingBlots.FirstOrDefault();
+        var targetY = crossing ? crossing.transform.position.y : _originalY;
+
+        for (int i = 0; i < bridgeBlots.Count; i++)
+        {
+            var blotTransform = bridgeBlots[i].transform;
+            var blotPath = new List<Vector3>() {
+                new Vector3(_blotPoints[i].position.x, targetY, _blotPoints[i].position.z),
+                BridgeEnd.position
+            };
+
+            StartCoroutine(LerpBlotPath(blotTransform, blotPath));
+            yield return new WaitForSeconds(DelayBetweenBridgeBlots);
+        }
+
+        yield return new WaitForSeconds(DelayBeforeCrossing);
+    }
+
+    IEnumerator LerpBlotPath(Transform blot, List<Vector3> positions)
+    {
+        positions.Insert(0, blot.position);
+        float speed = 5f;
+
+        for (int i = 0; i < positions.Count - 1; i++)
+        {
+            Vector3 start = positions[i];
+            Vector3 end = positions[i + 1];
+            float dist = Vector3.Distance(start, end);
+            yield return Move(blot, start, end, dist / speed);
+        }
     }
 
     IEnumerator Move(Transform blob, Vector3 from, Vector3 to, float duration)
@@ -130,4 +242,11 @@ public class BridgeNode : MonoBehaviour
 
         blob.position = to;
     }
+}
+
+struct BlotBridgeData
+{
+    public Blot Blot;
+    public float StartDistanceSquared;
+    public float EndDistanceSquared;
 }

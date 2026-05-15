@@ -180,7 +180,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1509192837}
-  - {fileID: 1134677012}
   - {fileID: 1342988018}
   - {fileID: 1838817384}
   - {fileID: 1620972585}
@@ -646,10 +645,6 @@ PrefabInstance:
     - target: {fileID: 4929190864631161729, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
       propertyPath: m_Name
       value: Blot
-      objectReference: {fileID: 0}
-    - target: {fileID: 5134427983769206457, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1480,37 +1475,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 712901692}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &721431847
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 721431848}
-  m_Layer: 0
-  m_Name: BridgeEnd
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &721431848
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 721431847}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.65, y: 0.35, z: -3.16}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &891724242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1522,7 +1486,7 @@ GameObject:
   - component: {fileID: 891724243}
   - component: {fileID: 891724244}
   m_Layer: 0
-  m_Name: BridgeStart
+  m_Name: BridgeTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1557,143 +1521,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   GameManager: {fileID: 1764359047}
   PlayerControls: {fileID: 712901696}
-  BridgeGeometry: {fileID: 1989411038}
-  BridgeEnd: {fileID: 721431848}
+  surface: {fileID: 1679059137}
+  bridgeGeometry: {fileID: 1989411038}
   DistanceForBlotToActivate: 1.3
-  DistanceForBlotToDeactivate: 0.5
-  CrossingSpeed: 10
-  DelayBetweenBridgeBlots: 1
-  DelayBeforeCrossing: 1
-  DelayBetweenBlots: 1
---- !u!1001 &1134677011
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 59415826}
-    m_Modifications:
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 6.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 7.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0.54
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 672330023614719274, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_Name
-      value: Blot
-      objectReference: {fileID: 0}
-    - target: {fileID: 4048436022561549249, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: _target
-      value: 
-      objectReference: {fileID: 712901693}
-    - target: {fileID: 4769575997467739776, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 396851913}
-    - target: {fileID: 4929190864631161729, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_Name
-      value: Blot
-      objectReference: {fileID: 0}
-    - target: {fileID: 5134427983769206457, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
---- !u!224 &1134677012 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-  m_PrefabInstance: {fileID: 1134677011}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1134677014 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4048436022561549249, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
-  m_PrefabInstance: {fileID: 1134677011}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9f4c13a21aba4e3fa3a3cc89763f7c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Blots.Blot
+  moveDuration: 2.5
+  delayBetweenStarts: 1
 --- !u!224 &1342988018 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 332060829416381897, guid: a514fe4472ed24d23baf140207ed6aa4, type: 3}
@@ -2570,14 +2402,12 @@ MonoBehaviour:
   - {fileID: 1838817385}
   - {fileID: 1620972586}
   - {fileID: 475314002}
-  - {fileID: 1134677014}
   _playerBlots:
   - {fileID: 1509192838}
   - {fileID: 1342988019}
   - {fileID: 1838817385}
   - {fileID: 1620972586}
   - {fileID: 475314002}
-  - {fileID: 1134677014}
   _targetPointRadiusMultiplier: 0.3
   _minDistanceBetweenBlots: 0.75
   _navMeshSampleDistance: 1.5
@@ -2985,4 +2815,3 @@ SceneRoots:
   - {fileID: 1666667021}
   - {fileID: 1989411043}
   - {fileID: 891724243}
-  - {fileID: 721431848}
