@@ -43,7 +43,6 @@ namespace GameManagement
                 return;
             }
 
-            // First Blot defines the initial group center.
             if (_blots.Count == 0)
             {
                 if (TryGetNavMeshPoint(blot.transform.position, out Vector3 centerPosition))
@@ -64,6 +63,12 @@ namespace GameManagement
 
             _blots.Add(blot);
             _localSlots.Add(blot, localSlot);
+        
+            Vector3 worldTarget = transform.position + localSlot;
+            if (TryGetNavMeshPoint(worldTarget, out Vector3 navMeshTarget))
+            {
+                blot.MoveBlot(navMeshTarget);
+            }
         }
 
         public void MoveGroupTo(Vector3 targetCenter)
@@ -80,11 +85,8 @@ namespace GameManagement
 
             Vector3 oldCenter = transform.position;
 
-            // This is the 3D movement vector from the previous group target
-            // to the new group target.
             Vector3 translation = newCenter - oldCenter;
 
-            // Move the group object so pivots follow the target center.
             transform.position = newCenter;
 
             for (int i = 0; i < _blots.Count; i++)
@@ -103,9 +105,6 @@ namespace GameManagement
 
                 Vector3 previousSlotWorldPosition = oldCenter + localSlot;
                 Vector3 translatedTarget = previousSlotWorldPosition + translation;
-
-                // Same as: newCenter + localSlot
-                // But this version makes the "translation" logic explicit.
 
                 if (!TryGetNavMeshPoint(translatedTarget, out Vector3 navMeshTarget))
                 {

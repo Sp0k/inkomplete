@@ -210,7 +210,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 4929190864631161729}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 2.47
+  m_Radius: 2.4
   m_Speed: 2
   m_Acceleration: 2
   avoidancePriority: 50
@@ -249,7 +249,7 @@ MonoBehaviour:
   - {fileID: -769187428, guid: e67433646051042e8b494c1a16507971, type: 3}
   _blotStates: 0000000001000000020000000300000004000000050000000600000007000000
   _blotImageRect: {fileID: 0}
-  _flipThreshold: 0.001
+  _flipThreshold: 0.0001
   _baseImageRotation:
     value:
       x: 0

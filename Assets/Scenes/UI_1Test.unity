@@ -433,6 +433,7 @@ MonoBehaviour:
   _minDistanceBetweenBlots: 0.75
   _navMeshSampleDistance: 1.5
   _maxAttemptsPerBlot: 30
+  _playerBlotGroup: {fileID: 1166555885}
   m_BlotCounter: {fileID: 8655159401705936262}
 --- !u!4 &761168507
 Transform:
@@ -480,6 +481,37 @@ Transform:
   m_Children:
   - {fileID: 1838705154}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &925573203
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 925573204}
+  m_Layer: 0
+  m_Name: RightPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &925573204
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925573203}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1166555886}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1021438881
 GameObject:
@@ -909,6 +941,59 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9f4c13a21aba4e3fa3a3cc89763f7c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Blots.Blot
+--- !u!1 &1166555884
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1166555886}
+  - component: {fileID: 1166555885}
+  m_Layer: 0
+  m_Name: PlayerBlotGroup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1166555885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166555884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 166e11c09fd034e3cbc9c63802dba11e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManagement.BlotGroupController
+  _leftPivot: {fileID: 1837994127}
+  _rightPivot: {fileID: 925573204}
+  _baseRadius: 0.75
+  _radiusGrowthPerBlot: 0.25
+  _minDistanceBetweenSlots: 0.75
+  _navMeshSampleDistance: 1.5
+  _maxAttemptsPerSlot: 60
+--- !u!4 &1166555886
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166555884}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.70185, y: -0.63907, z: 7.59213}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1837994127}
+  - {fileID: 925573204}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1785479789
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,7 +1027,7 @@ MonoBehaviour:
   - Id: blot_cry_1
     Clip: {fileID: 8300000, guid: cf1add782c9f6424189d5cf3b7aef823, type: 3}
     Volume: 1
-    Pitch: 0
+    Pitch: 1
     Loop: 0
     Source: {fileID: 0}
   _musicClips: []
@@ -960,6 +1045,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1837994126
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1837994127}
+  m_Layer: 0
+  m_Name: LeftPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1837994127
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837994126}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1166555886}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1838705153
 GameObject:
@@ -1558,3 +1674,4 @@ SceneRoots:
   - {fileID: 1859055005}
   - {fileID: 1785479791}
   - {fileID: 8655159401705936261}
+  - {fileID: 1166555886}
