@@ -142,7 +142,7 @@ namespace Blots
             Recruited = true;
             CurrentState = BlotState.Idle;
             _blotImageRect.localRotation = _baseImageRotation;
-            GameManager.Instance.PlayerBlots.Add(this);
+            GameManager.Instance.RegisterPlayerBlot(this);
         }
 
         private void UpdateBlotAppearance()
