@@ -2,8 +2,6 @@ using Blots;
 using Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UIElements;
 
 namespace GameManagement
 {
@@ -18,10 +16,6 @@ namespace GameManagement
         public IInteractable HighlightedObject { get; private set; }
 
         [Header("Group Movement")]
-        [SerializeField] private float _targetPointRadiusMultiplier = 0.3f;
-        [SerializeField] private float _minDistanceBetweenBlots = 0.75f;
-        [SerializeField] private float _navMeshSampleDistance = 1.5f;
-        [SerializeField] private int _maxAttemptsPerBlot = 30;
         [SerializeField] private BlotGroupController _playerBlotGroup;
 
         [Header("UI Elements")]
@@ -153,6 +147,24 @@ namespace GameManagement
 
             HighlightedObject = null;
             return true;
+        }
+
+        public void HandleMovableBlockInteraction(Transform moveableTransform)
+        {
+            if (_playerBlotGroup == null)
+            {
+                Debug.LogWarning("No BlotGroupController assigned to the GameManager.");
+                return;
+            }
+
+            if (_playerBlotGroup.HasAttachedMoveable())
+            {
+                _playerBlotGroup.ClearMoveable();
+            }
+            else
+            {
+                _playerBlotGroup.AssignMoveableToPivot(moveableTransform);
+            }
         }
 
         #endregion
