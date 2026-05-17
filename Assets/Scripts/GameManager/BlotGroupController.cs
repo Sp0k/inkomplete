@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Blots;
+using Puzzle.PhysicsBased;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,28 +8,21 @@ namespace GameManagement
 {
     public class BlotGroupController : MonoBehaviour
     {
-        [Header("Group Pivots")]
-        [SerializeField] private Transform _leftPivot;
-        [SerializeField] private Transform _rightPivot;
+        [Header("Carry Pivot")]
+        private Transform _attachedMoveable;
+        private Blot _moveableOwner;
 
         [Header("Formation")]
-        [SerializeField] private float _baseRadius = 0.75f;
-        [SerializeField] private float _radiusGrowthPerBlot = 0.25f;
-        [SerializeField] private float _minDistanceBetweenSlots = 0.75f;
+        [SerializeField] private float _baseRadius = 1.25f;
+        [SerializeField] private float _radiusGrowthPerBlot = 0.35f;
+        [SerializeField] private float _minDistanceBetweenSlots = 1.15f;
         [SerializeField] private float _navMeshSampleDistance = 1.5f;
         [SerializeField] private int _maxAttemptsPerSlot = 60;
 
         private readonly List<Blot> _blots = new();
         private readonly Dictionary<Blot, Vector3> _localSlots = new();
 
-        public Transform LeftPivot => _leftPivot;
-        public Transform RightPivot => _rightPivot;
         public IReadOnlyList<Blot> Blots => _blots;
-
-        private void Awake()
-        {
-            CreateMissingPivots();
-        }
 
         public void Clear()
         {
@@ -63,7 +57,7 @@ namespace GameManagement
 
             _blots.Add(blot);
             _localSlots.Add(blot, localSlot);
-        
+
             Vector3 worldTarget = transform.position + localSlot;
             if (TryGetNavMeshPoint(worldTarget, out Vector3 navMeshTarget))
             {
@@ -83,10 +77,6 @@ namespace GameManagement
                 return;
             }
 
-            Vector3 oldCenter = transform.position;
-
-            Vector3 translation = newCenter - oldCenter;
-
             transform.position = newCenter;
 
             for (int i = 0; i < _blots.Count; i++)
@@ -103,10 +93,9 @@ namespace GameManagement
                     continue;
                 }
 
-                Vector3 previousSlotWorldPosition = oldCenter + localSlot;
-                Vector3 translatedTarget = previousSlotWorldPosition + translation;
+                Vector3 worldTarget = newCenter + localSlot;
 
-                if (!TryGetNavMeshPoint(translatedTarget, out Vector3 navMeshTarget))
+                if (!TryGetNavMeshPoint(worldTarget, out Vector3 navMeshTarget))
                 {
                     continue;
                 }
@@ -200,23 +189,108 @@ namespace GameManagement
             return false;
         }
 
-        private void CreateMissingPivots()
+        public void AssignMoveableToPivot(Transform moveableObj)
         {
-            if (_leftPivot == null)
+            if (moveableObj == null || _attachedMoveable != null)
             {
-                GameObject pull = new GameObject("Pull Pivot");
-                pull.transform.SetParent(transform);
-                pull.transform.localPosition = new Vector3(0f, 0f, 1f);
-                _leftPivot = pull.transform;
+                return;
             }
 
-            if (_rightPivot == null)
+            Blot closestBlot = GetClosestBlotTo(moveableObj.position);
+
+            if (closestBlot == null)
             {
-                GameObject push = new GameObject("Push Pivot");
-                push.transform.SetParent(transform);
-                push.transform.localPosition = new Vector3(0f, 0f, -1f);
-                _rightPivot = push.transform;
+                Debug.LogWarning("No blot found to carry the movable object.");
+                return;
             }
+
+            if (closestBlot.CarryTransform == null)
+            {
+                Debug.LogWarning($"{closestBlot.name} has no CarryTransform assigned.");
+                return;
+            }
+
+            _attachedMoveable = moveableObj;
+            _moveableOwner = closestBlot;
+
+            RecenterFormationAroundOwner(closestBlot);
+
+            moveableObj.SetParent(closestBlot.CarryTransform, false);
+            moveableObj.localPosition = Vector3.zero;
+        }
+
+        private Blot GetClosestBlotTo(Vector3 worldPosition)
+        {
+            Blot closestBlot = null;
+            float shortestDistanceSqr = float.MaxValue;
+
+            foreach (Blot blot in _blots)
+            {
+                if (blot == null)
+                {
+                    continue;
+                }
+
+                float distanceSqr = (blot.transform.position - worldPosition).sqrMagnitude;
+
+                if (distanceSqr < shortestDistanceSqr)
+                {
+                    shortestDistanceSqr = distanceSqr;
+                    closestBlot = blot;
+                }
+            }
+
+            return closestBlot;
+        }
+
+        public void ClearMoveable()
+        {
+            if (_attachedMoveable == null)
+            {
+                return;
+            }
+
+            MovableObject movableObject = _attachedMoveable.GetComponent<MovableObject>();
+
+            if (movableObject != null && movableObject.PuzzleGroup != null)
+            {
+                _attachedMoveable.SetParent(movableObject.PuzzleGroup, true);
+            }
+            else
+            {
+                _attachedMoveable.SetParent(null, true);
+            }
+
+            _attachedMoveable = null;
+            _moveableOwner = null;
+        }
+
+        public bool HasAttachedMoveable()
+        {
+            return _attachedMoveable != null;
+        }
+
+        private void RecenterFormationAroundOwner(Blot owner)
+        {
+            if (owner == null || !_localSlots.TryGetValue(owner, out Vector3 ownerSlot))
+            {
+                return;
+            }
+
+            foreach (Blot blot in _blots)
+            {
+                if (blot == null || !_localSlots.ContainsKey(blot))
+                {
+                    continue;
+                }
+
+                _localSlots[blot] -= ownerSlot;
+            }
+
+            _localSlots[owner] = Vector3.zero;
+
+            // The group transform now represents the carrying blot's position.
+            transform.position = owner.transform.position;
         }
     }
 }

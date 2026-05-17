@@ -78,17 +78,16 @@ namespace Player
         {
             if (GameManager.Instance.HighlightedObject != null) return;
 
+            Debug.Log("Entered Trigger");
+
             if (other.TryGetComponent<IInteractable>(out IInteractable interactable))
             {
-                if (other.TryGetComponent<Blot>(out Blot blot))
-                {
-                    if (!blot.CurrentState.Equals(BlotState.Lost)) return;
-                }
-
-                if (!GameManager.Instance.SetHighlightedObject(interactable)) return;
+                if (!interactable.IsInteractive || !GameManager.Instance.SetHighlightedObject(interactable)) return;
                 Vector3 currentScale = transform.localScale;
                 Vector3 resize = new (currentScale.x * 2, currentScale.y, currentScale.z * 2);
                 transform.localScale = resize;
+
+                other.gameObject.layer = 8;
             }
         }
 
@@ -102,6 +101,9 @@ namespace Player
                 Vector3 currentScale = transform.localScale;
                 Vector3 resize = new (currentScale.x / 2, currentScale.y, currentScale.z / 2);
                 transform.localScale = resize;
+
+                if (other.TryGetComponent<Blot>(out Blot blot)) return;
+                other.gameObject.layer = 0;
             }
         }
 

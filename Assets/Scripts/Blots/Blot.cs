@@ -4,7 +4,6 @@ using Interfaces;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI;
 
 namespace Blots
 {
@@ -33,21 +32,24 @@ namespace Blots
 
         [Header("Blot State")]
         public BlotState CurrentState { get; private set; } = BlotState.Idle;
-        public bool Recruited { get; private set; } = false;
+        public bool IsInteractive { get; private set; } = true;
 
         [Header("Blot Appearance")]
         [Tooltip("List of sprites corresponding to each BlotState. Ensure the order matches the BlotState enum.")]
-        [SerializeField] private Canvas _blotCanvas;
+        [SerializeField] private Transform _blotSpritePivot;
+        [SerializeField] private SpriteRenderer _blotSpriteRenderer;
         [SerializeField] private List<Sprite> _blotSprites;
         [SerializeField] private List<BlotState> _blotStates;
-        [SerializeField] private RectTransform _blotImageRect;
         [SerializeField] private float _flipThreshold = 0.001f;
-        [SerializeField] private quaternion _baseImageRotation;
-        private Image _blotImage;
+        [SerializeField] private quaternion _baseRendererRotation;
         private Dictionary<BlotState, SineParams> _sineAnimParams = new();
 
         [Header("Blot Sounds")]
         [SerializeField] private List<string> _sfxRefs;
+
+        [Header("Carrying")]
+        [SerializeField] private Transform _carryTransform;
+        public Transform CarryTransform => _carryTransform;
 
         #region Unity Functions
 
@@ -56,19 +58,9 @@ namespace Blots
             _navMeshAgent = GetComponent<NavMeshAgent>();
             _navMeshAgent.speed = _speed;
 
-            if (_blotCanvas != null)
+            if (_blotSpriteRenderer != null)
             {
-                _blotImage = _blotCanvas.GetComponentInChildren<Image>();
-
-                if (_blotImage != null && _blotImageRect == null)
-                {
-                    _blotImageRect = _blotImage.GetComponent<RectTransform>();
-                }
-
-                if (_blotImageRect != null)
-                {
-                    _baseImageRotation = _blotImageRect.localRotation;
-                }
+                    _baseRendererRotation = _blotSpriteRenderer.transform.localRotation;
             }
 
             _previousPosition = transform.position;
@@ -93,6 +85,10 @@ namespace Blots
 
             UpdateBlotAppearance();
             ApplySinCurveAnimation();
+        
+            Quaternion rotation = transform.localRotation;
+            rotation = Quaternion.Euler(rotation.x, 0f, rotation.z);
+            transform.localRotation = rotation;
         }
 
         private void LateUpdate()
@@ -115,7 +111,7 @@ namespace Blots
 
         public void InitializeBlot()
         {
-            if (!Recruited)
+            if (IsInteractive)
             {
                 CurrentState = BlotState.Lost;
             }
@@ -139,9 +135,9 @@ namespace Blots
 
         public void RecruitBlot()
         {
-            Recruited = true;
+            IsInteractive = false;
             CurrentState = BlotState.Idle;
-            _blotImageRect.localRotation = _baseImageRotation;
+            _blotSpritePivot.transform.localRotation = _baseRendererRotation;
             GameManager.Instance.RegisterPlayerBlot(this);
         }
 
@@ -150,45 +146,31 @@ namespace Blots
             int stateIndex = _blotStates.IndexOf(CurrentState);
             if (stateIndex >= 0 && stateIndex < _blotSprites.Count)
             {
-                Image blotImage = _blotCanvas.GetComponentInChildren<Image>();
-                if (blotImage != null)
+                if (_blotSpriteRenderer != null)
                 {
-                    blotImage.sprite = _blotSprites[stateIndex];
+                    _blotSpriteRenderer.sprite = _blotSprites[stateIndex];
                 }
             }
         }
 
         private void HandleCanvasFlip()
         {
-            if (_blotImageRect == null)
+            if (_blotSpriteRenderer == null)
             {
                 return;
             }
 
             float xMovement = transform.position.x - _previousPosition.x;
 
-            if (Mathf.Abs(xMovement) < _flipThreshold)
+            if (CurrentState.Equals(BlotState.Moving))
             {
-                return;
+                _blotSpriteRenderer.flipX = xMovement < 0;
             }
-
-            Vector3 scale = _blotImageRect.localScale;
-
-            if (xMovement > 0f)
-            {
-                scale.x = Mathf.Abs(scale.x);
-            }
-            else
-            {
-                scale.x = -Mathf.Abs(scale.x);
-            }
-
-            _blotImageRect.localScale = scale;
         }
 
         private void ApplySinCurveAnimation()
         {
-            if (_blotImageRect == null)
+            if (_blotSpritePivot == null)
             {
                 return;
             }
@@ -220,16 +202,16 @@ namespace Blots
 
         private void HandleRotation(float rotationValue)
         {
-            _blotImageRect.localRotation = _baseImageRotation * Quaternion.Euler(0f, 0f, rotationValue);
+            _blotSpritePivot.transform.localRotation = _baseRendererRotation * Quaternion.Euler(0f, 0f, rotationValue);
         }
 
         private void HandleScaling(float scaleValue)
         {
-            Vector3 currentScale = _blotImageRect.localScale;
+            Vector3 currentScale = _blotSpritePivot.transform.localScale;
 
             float xDirection = currentScale.x < 0f ? -1f : 1f;
 
-            _blotImageRect.localScale = new Vector3(
+            _blotSpritePivot.transform.localScale = new Vector3(
                 scaleValue * xDirection,
                 currentScale.y,
                 currentScale.z
@@ -242,7 +224,7 @@ namespace Blots
 
         public void Interact()
         {
-            if (CurrentState.Equals(BlotState.Lost))
+            if (CurrentState.Equals(BlotState.Lost) && IsInteractive)
             {
                 RecruitBlot();
                 GameManager.Instance.UpdateBlotCount();
