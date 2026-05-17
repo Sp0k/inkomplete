@@ -803,9 +803,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 166e11c09fd034e3cbc9c63802dba11e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManagement.BlotGroupController
-  _baseRadius: 1.1
-  _radiusGrowthPerBlot: 0.1
-  _minDistanceBetweenSlots: 0.75
+  _baseRadius: 1.25
+  _radiusGrowthPerBlot: 0.35
+  _minDistanceBetweenSlots: 1.15
   _navMeshSampleDistance: 1.5
   _maxAttemptsPerSlot: 60
 --- !u!4 &1166555886

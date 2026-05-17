@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Blots;
 using Puzzle.PhysicsBased;
@@ -11,6 +12,21 @@ namespace GameManagement
         [Header("Carry Pivot")]
         private Transform _attachedMoveable;
         private Blot _moveableOwner;
+
+        [Header("Pickup Animation")]
+        [SerializeField] private float _pickupApproachRadius = 1.25f;
+        [SerializeField] private float _pickupApproachTimeout = 1.25f;
+        [SerializeField] private float _pickupArriveDistance = 0.45f;
+        [SerializeField] private float _pickupThrowDuration = 0.45f;
+        [SerializeField] private float _pickupThrowHeight = 1.5f;
+
+        private Coroutine _pickupRoutine;
+        private bool _isPickupAnimating;
+
+        private Rigidbody _attachedRigidbody;
+        private bool _attachedRigidbodyWasKinematic;
+
+        private readonly Dictionary<Blot, Vector3> _pickupTargets = new();
 
         [Header("Formation")]
         [SerializeField] private float _baseRadius = 1.25f;
@@ -72,6 +88,7 @@ namespace GameManagement
                 return;
             }
 
+
             if (!TryGetNavMeshPoint(targetCenter, out Vector3 newCenter))
             {
                 return;
@@ -94,6 +111,14 @@ namespace GameManagement
                 }
 
                 Vector3 worldTarget = newCenter + localSlot;
+
+                if (Physics.Raycast(worldTarget + new Vector3(0f, 10f, 0f), Vector3.down, out RaycastHit hit))
+                {
+                    if (hit.transform.gameObject.TryGetComponent<MovableObject>(out MovableObject _))
+                    {
+                        continue;
+                    }
+                }
 
                 if (!TryGetNavMeshPoint(worldTarget, out Vector3 navMeshTarget))
                 {
@@ -191,7 +216,7 @@ namespace GameManagement
 
         public void AssignMoveableToPivot(Transform moveableObj)
         {
-            if (moveableObj == null || _attachedMoveable != null)
+            if (moveableObj == null || _attachedMoveable != null || _isPickupAnimating)
             {
                 return;
             }
@@ -210,13 +235,7 @@ namespace GameManagement
                 return;
             }
 
-            _attachedMoveable = moveableObj;
-            _moveableOwner = closestBlot;
-
-            RecenterFormationAroundOwner(closestBlot);
-
-            moveableObj.SetParent(closestBlot.CarryTransform, false);
-            moveableObj.localPosition = Vector3.zero;
+            _pickupRoutine = StartCoroutine(PickupMoveableRoutine(moveableObj, closestBlot));
         }
 
         private Blot GetClosestBlotTo(Vector3 worldPosition)
@@ -245,6 +264,15 @@ namespace GameManagement
 
         public void ClearMoveable()
         {
+            if (_pickupRoutine != null)
+            {
+                StopCoroutine(_pickupRoutine);
+                _pickupRoutine = null;
+            }
+
+            _isPickupAnimating = false;
+            _pickupTargets.Clear();
+
             if (_attachedMoveable == null)
             {
                 return;
@@ -261,13 +289,19 @@ namespace GameManagement
                 _attachedMoveable.SetParent(null, true);
             }
 
+            if (_attachedRigidbody != null)
+            {
+                _attachedRigidbody.isKinematic = _attachedRigidbodyWasKinematic;
+                _attachedRigidbody = null;
+            }
+
             _attachedMoveable = null;
             _moveableOwner = null;
         }
 
         public bool HasAttachedMoveable()
         {
-            return _attachedMoveable != null;
+            return _attachedMoveable != null || _isPickupAnimating;
         }
 
         private void RecenterFormationAroundOwner(Blot owner)
@@ -292,5 +326,194 @@ namespace GameManagement
             // The group transform now represents the carrying blot's position.
             transform.position = owner.transform.position;
         }
+
+        private IEnumerator PickupMoveableRoutine(Transform moveableObj, Blot owner)
+        {
+            _isPickupAnimating = true;
+            _moveableOwner = owner;
+
+            MoveBlotsToPickupPositions(moveableObj.position, owner);
+
+            float timer = 0f;
+
+            while (timer < _pickupApproachTimeout)
+            {
+                if (moveableObj == null || owner == null)
+                {
+                    _isPickupAnimating = false;
+                    yield break;
+                }
+
+                if (HaveBlotsReachedPickupPositions())
+                {
+                    break;
+                }
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            _attachedMoveable = moveableObj;
+            _attachedRigidbody = moveableObj.GetComponent<Rigidbody>();
+
+            if (_attachedRigidbody != null)
+            {
+                _attachedRigidbodyWasKinematic = _attachedRigidbody.isKinematic;
+                _attachedRigidbody.isKinematic = true;
+                _attachedRigidbody.linearVelocity = Vector3.zero;
+                _attachedRigidbody.angularVelocity = Vector3.zero;
+            }
+
+            yield return ThrowMoveableToCarryTransform(moveableObj, owner);
+
+            RecenterFormationAroundOwner(owner);
+
+            _isPickupAnimating = false;
+            _pickupRoutine = null;
+        }
+
+        private void MoveBlotsToPickupPositions(Vector3 moveablePosition, Blot owner)
+        {
+            _pickupTargets.Clear();
+
+            int count = _blots.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            Vector3 ownerDirection = owner.transform.position - moveablePosition;
+            ownerDirection.y = 0f;
+
+            if (ownerDirection.sqrMagnitude < 0.001f)
+            {
+                ownerDirection = Vector3.back;
+            }
+
+            ownerDirection.Normalize();
+
+            for (int i = 0; i < count; i++)
+            {
+                Blot blot = _blots[i];
+
+                if (blot == null || blot.NavMeshAgent == null || !blot.NavMeshAgent.isOnNavMesh)
+                {
+                    continue;
+                }
+
+                Vector3 targetPosition;
+
+                if (blot == owner)
+                {
+                    targetPosition = moveablePosition + ownerDirection * _pickupApproachRadius;
+                }
+                else
+                {
+                    float angle = (Mathf.PI * 2f * i) / count;
+
+                    Vector3 ringOffset = new Vector3(
+                        Mathf.Cos(angle) * _pickupApproachRadius,
+                        0f,
+                        Mathf.Sin(angle) * _pickupApproachRadius
+                    );
+
+                    targetPosition = moveablePosition + ringOffset;
+                }
+
+                if (!TryGetNavMeshPoint(targetPosition, out Vector3 navMeshTarget))
+                {
+                    continue;
+                }
+
+                _pickupTargets[blot] = navMeshTarget;
+
+                blot.NavMeshAgent.stoppingDistance = 0.15f;
+                blot.MoveBlot(navMeshTarget);
+            }
+        }
+
+        private bool HaveBlotsReachedPickupPositions()
+        {
+            if (_pickupTargets.Count == 0)
+            {
+                return true;
+            }
+
+            foreach (KeyValuePair<Blot, Vector3> pair in _pickupTargets)
+            {
+                Blot blot = pair.Key;
+                Vector3 target = pair.Value;
+
+                if (blot == null || blot.NavMeshAgent == null)
+                {
+                    continue;
+                }
+
+                if (blot.NavMeshAgent.pathPending)
+                {
+                    return false;
+                }
+
+                float distance = Vector3.Distance(blot.transform.position, target);
+
+                if (distance > _pickupArriveDistance)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private IEnumerator ThrowMoveableToCarryTransform(Transform moveableObj, Blot owner)
+        {
+            Vector3 startPosition = moveableObj.position;
+
+            float elapsed = 0f;
+            float duration = Mathf.Max(0.01f, _pickupThrowDuration);
+
+            while (elapsed < duration)
+            {
+                if (moveableObj == null || owner == null || owner.CarryTransform == null)
+                {
+                    yield break;
+                }
+
+                elapsed += Time.deltaTime;
+
+                float t = Mathf.Clamp01(elapsed / duration);
+
+                // Smoothstep easing.
+                float easedT = t * t * (3f - 2f * t);
+
+                Vector3 endPosition = owner.CarryTransform.position;
+                Vector3 basePosition = Vector3.Lerp(startPosition, endPosition, easedT);
+
+                // Arc motion: starts low, rises, then lands.
+                float arcHeight = Mathf.Sin(easedT * Mathf.PI) * _pickupThrowHeight;
+                basePosition.y += arcHeight;
+
+                if (_attachedRigidbody != null)
+                {
+                    _attachedRigidbody.MovePosition(basePosition);
+                }
+                else
+                {
+                    moveableObj.position = basePosition;
+                }
+
+                yield return null;
+            }
+
+            if (moveableObj != null && owner != null && owner.CarryTransform != null)
+            {
+                moveableObj.SetParent(owner.CarryTransform, false);
+                moveableObj.localPosition = Vector3.zero;
+                moveableObj.localRotation = Quaternion.identity;
+            }
+        }
+
+
     }
 }
