@@ -295,6 +295,11 @@ namespace GameManagement
                 _attachedRigidbody = null;
             }
 
+            _attachedMoveable.gameObject.TryGetComponent<MeshRenderer>(out MeshRenderer renderer);
+            var col = renderer.material.color;
+            col.a = 1f;
+            renderer.material.color = col;
+
             _attachedMoveable = null;
             _moveableOwner = null;
         }
@@ -370,6 +375,10 @@ namespace GameManagement
 
             _isPickupAnimating = false;
             _pickupRoutine = null;
+            _attachedMoveable.gameObject.TryGetComponent<MeshRenderer>(out MeshRenderer renderer);
+            var col = renderer.material.color;
+            col.a = 0.5f;
+            renderer.material.color = col;
         }
 
         private void MoveBlotsToPickupPositions(Vector3 moveablePosition, Blot owner)
