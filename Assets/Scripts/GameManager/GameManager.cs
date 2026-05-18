@@ -1,5 +1,6 @@
 using Blots;
 using Interfaces;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Puzzle.PhysicsBased;
@@ -153,6 +154,37 @@ namespace GameManagement
             return true;
         }
 
+        public bool ClearHighlightedObject(IInteractable interactable)
+        {
+            if (HighlightedObject == null) return false;
+            if (HighlightedObject != interactable) return false;
+
+            HighlightedObject = null;
+            return true;
+        }
+
+        public bool IsPlayerBlot(Blot blot)
+        {
+            return blot != null && _playerBlots.Contains(blot);
+        }
+
+        public bool TryInteractWithHighlightedObject()
+        {
+            if (HighlightedObject == null)
+            {
+                return false;
+            }
+
+            if (!HighlightedObject.IsInteractive)
+            {
+                HighlightedObject = null;
+                return false;
+            }
+
+            HighlightedObject.Interact();
+            return true;
+        }
+
         public void HandleMovableBlockInteraction(Transform moveableTransform)
         {
             if (_playerBlotGroup == null)
@@ -201,6 +233,30 @@ namespace GameManagement
             }
 
             return _activePuzzleCompletion.TryCompletePuzzle();
+        }
+
+        public void HandleBreakableObjectInteraction(BreakableObject breakableObject)
+        {
+            if (_playerBlotGroup == null)
+            {
+                Debug.LogWarning("No BlotGroupController assigned to the GameManager.");
+                return;
+            }
+
+            _playerBlotGroup.AttackBreakableObject(breakableObject);
+        }
+
+        public void BreakObject(GameObject go)
+        {
+            Destroy(go);
+            StartCoroutine(RebakeNavMesh());
+        }
+
+        private IEnumerator RebakeNavMesh()
+        {
+            yield return new WaitForEndOfFrame();
+            CurrentLevel.RebakeNavMesh();
+            yield return null;
         }
 
         #endregion

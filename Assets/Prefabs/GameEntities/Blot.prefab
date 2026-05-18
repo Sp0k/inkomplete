@@ -218,6 +218,11 @@ MonoBehaviour:
   - blot_cry_1
   - blot_cry_2
   _carryTransform: {fileID: 5991619897899149226}
+  _attackDuration: 0.45
+  _attackJumpHeight: 0.65
+  _attackForwardDistance: 0.6
+  _attackSquashAmount: 0.2
+  _attackSfxRef: blot_attack
 --- !u!65 &8711022262568160371
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -228,7 +233,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
