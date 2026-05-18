@@ -295,6 +295,17 @@ namespace Player
             }
         }
 
+        public void TeleportTo(Vector3 worldPosition)
+        {
+            if (!TryGetValidGroundPosition(worldPosition, out Vector3 validPosition))
+            {
+                Debug.Log("TeleportTo: no valid ground position");
+                return;
+            }
+
+            SetIndicatorPosition(validPosition); 
+        }
+
         #endregion
     }
 }
