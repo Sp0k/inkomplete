@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e67433646051042e8b494c1a16507971
+guid: 2806da6e5437298468c54121dd279e08
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -69,10 +69,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -93,30 +93,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: blotsprite_idle
+      name: buttonicon_mouse
       rect:
         serializedVersion: 2
-        x: 43
-        y: 786
-        width: 206
-        height: 184
+        x: 0
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,20 +112,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f82c0645760e74aa6bf6e0bd1f829f79
-      internalID: 244311761
+      spriteID: 8b79def7d6d3b0c428578eed657a9d3f
+      internalID: -1853688639
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_exclamation
+      name: buttonicon_leftclick
       rect:
         serializedVersion: 2
-        x: 310
-        y: 729
-        width: 144
-        height: 277
+        x: 64
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -147,20 +134,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 983b07202727e49f8a4ac44c0e5f7d41
-      internalID: 889238679
+      spriteID: 957a5e944c3ae7a4e892ec5fd9f3a1df
+      internalID: -1236164102
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_confused
+      name: buttonicon_A
       rect:
         serializedVersion: 2
-        x: 534
-        y: 756
-        width: 166
-        height: 243
+        x: 128
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -169,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8e72f1486610e49a1ba4d9ef90f28aae
-      internalID: -1017961020
+      spriteID: b48b286b4f7d0444984f0738b40ffd35
+      internalID: 903277237
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_jumping
+      name: buttonicon_D
       rect:
         serializedVersion: 2
-        x: 21
-        y: 540
-        width: 200
-        height: 185
+        x: 192
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -191,20 +178,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 30b93bd4d52bf48278cee30c84dd9033
-      internalID: 881012061
+      spriteID: c5e068be3351e1543a75ccd465d2dc88
+      internalID: -1255075034
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_moving
+      name: buttonicon_LStick
       rect:
         serializedVersion: 2
-        x: 275
-        y: 524
-        width: 212
-        height: 174
+        x: 0
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -213,20 +200,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e6952382df16041f69125b24681b88f9
-      internalID: 1081840633
+      spriteID: ffa3b9b6bfa2f374da3f28b518ed2a24
+      internalID: 1855569792
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_falling
+      name: buttonicon_LB
       rect:
         serializedVersion: 2
-        x: 549
-        y: 482
-        width: 143
-        height: 233
+        x: 64
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -235,20 +222,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 69da48a85e1244761b5a227cc61861c0
-      internalID: 866228827
+      spriteID: 34106d6f27b348b40b03ec85f1f99601
+      internalID: -1354722126
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_hurt
+      name: buttonicon_RB
       rect:
         serializedVersion: 2
-        x: 35
-        y: 234
-        width: 208
-        height: 276
+        x: 128
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -257,20 +244,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a26862e65674b4f7483703feba466138
-      internalID: -1802134202
+      spriteID: 0496b8b3eca969144a1fbe6532b66cc2
+      internalID: 1587574345
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_dead
+      name: buttonicon_LT
       rect:
         serializedVersion: 2
-        x: 310
-        y: 258
-        width: 274
-        height: 220
+        x: 192
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -279,20 +266,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e0ccb243fee7d4ccab82eb6347263a2e
-      internalID: -769187428
+      spriteID: 17f37b67cd840df4ca58296a9e9ae164
+      internalID: -1000076764
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_lost
+      name: buttonicon_E
       rect:
         serializedVersion: 2
-        x: 795
-        y: 726
-        width: 141
-        height: 272
+        x: 0
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -301,20 +288,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fa3f17690529e834ebb0411b90995b37
-      internalID: -1699068132
+      spriteID: d364551da5c316d4baa9a36edbae494f
+      internalID: -1491141919
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_carrying
+      name: buttonicon_ctrl
       rect:
         serializedVersion: 2
-        x: 766
-        y: 469
-        width: 172
-        height: 219
+        x: 64
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -323,20 +310,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e9fe3c27ba6f22b49945c1927bdb9665
-      internalID: -1732739801
+      spriteID: 6842496a8dca6524fa049ac4e18ccb74
+      internalID: 1291238243
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotsprite_icon
+      name: buttonicon_shift
       rect:
         serializedVersion: 2
-        x: 656
-        y: 230
-        width: 154
-        height: 215
+        x: 128
+        y: 64
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -345,8 +332,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0109718cd9bd6744f89c5bbb48ccf3c7
-      internalID: -1340132566
+      spriteID: db0e22849fdd83b448bbced8c2b3de6c
+      internalID: 1716818616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttonicon_tab
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8de08d5bce11c3f41bf8a7e9128a785d
+      internalID: -2041814128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttonicon_RT
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33c79323e91ea2442924303529582f8f
+      internalID: -1149870167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttonicon_btnsouth
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 50294377eba245c47badb5ce69291ef9
+      internalID: 1177902306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttonicon_btnwest
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78f68cd9ab98a294f8aa1534af4b716a
+      internalID: -426205696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttonicon_menubtn
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e10bd923fe4209b4ba64c50901d313a8
+      internalID: -1605939082
       vertices: []
       indices: 
       edges: []
@@ -355,7 +452,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 151eadf7fba774871be54694f9869191
+    spriteID: 20aaad205c616984ca71e2672172fdf6
     internalID: 0
     vertices: []
     indices: 
@@ -363,23 +460,24 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceOnImport
-        value: True
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":256.0,"y":256.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":1,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      blotsprite_carrying: -1732739801
-      blotsprite_confused: -1017961020
-      blotsprite_dead: -769187428
-      blotsprite_exclamation: 889238679
-      blotsprite_falling: 866228827
-      blotsprite_hurt: -1802134202
-      blotsprite_icon: -1340132566
-      blotsprite_idle: 244311761
-      blotsprite_jumping: 881012061
-      blotsprite_lost: -1699068132
-      blotsprite_moving: 1081840633
+      buttonicon_A: 903277237
+      buttonicon_D: -1255075034
+      buttonicon_E: -1491141919
+      buttonicon_LB: -1354722126
+      buttonicon_LStick: 1855569792
+      buttonicon_LT: -1000076764
+      buttonicon_RB: 1587574345
+      buttonicon_RT: -1149870167
+      buttonicon_btnsouth: 1177902306
+      buttonicon_btnwest: -426205696
+      buttonicon_ctrl: 1291238243
+      buttonicon_leftclick: -1236164102
+      buttonicon_menubtn: -1605939082
+      buttonicon_mouse: -1853688639
+      buttonicon_shift: 1716818616
+      buttonicon_tab: -2041814128
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
