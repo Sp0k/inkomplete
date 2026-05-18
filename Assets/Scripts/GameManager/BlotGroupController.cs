@@ -40,6 +40,24 @@ namespace GameManagement
 
         public IReadOnlyList<Blot> Blots => _blots;
 
+        [Header("Attack Animation")]
+        [SerializeField] private float _attackApproachRadius = 1.25f;
+        [SerializeField] private float _attackApproachTimeout = 1.25f;
+        [SerializeField] private float _attackArriveDistance = 0.5f;
+        [SerializeField] private float _attackDuration = 0.5f;
+        [SerializeField] private float _attackStagger = 0.06f;
+
+        private Coroutine _attackRoutine;
+        private bool _isAttackAnimating;
+        private readonly Dictionary<Blot, Vector3> _attackTargets = new();
+
+        [Header("Attack Positioning")]
+        [SerializeField] private float _attackDistanceFromBlock = 0.5f;
+        [SerializeField] private float _attackMinDistanceBetweenBlots = 0.9f;
+        [SerializeField] private float _attackRingSpacing = 0.65f;
+        [SerializeField] private int _attackMaxRings = 3;
+        [SerializeField] private int _attackSpotAttemptsPerRing = 24;
+
         public void Clear()
         {
             _blots.Clear();
@@ -111,14 +129,6 @@ namespace GameManagement
                 }
 
                 Vector3 worldTarget = newCenter + localSlot;
-
-                if (Physics.Raycast(worldTarget + new Vector3(0f, 10f, 0f), Vector3.down, out RaycastHit hit))
-                {
-                    if (hit.transform.gameObject.TryGetComponent<MovableObject>(out MovableObject movableObject))
-                    {
-                        if (movableObject.IsInteractive) continue;
-                    }
-                }
 
                 if (!TryGetNavMeshPoint(worldTarget, out Vector3 navMeshTarget))
                 {
@@ -579,6 +589,175 @@ namespace GameManagement
                 col.a = alpha;
                 renderer.material.color = col;
             }
+        }
+
+        public void AttackBreakableObject(BreakableObject breakableObject)
+        {
+            if (breakableObject == null)
+            {
+                return;
+            }
+
+            if (_isAttackAnimating || _isPickupAnimating)
+            {
+                return;
+            }
+
+            if (_blots.Count == 0)
+            {
+                return;
+            }
+
+            if (!breakableObject.TryBeginAttack())
+            {
+                return;
+            }
+
+            float dist = Vector3.Distance(breakableObject.transform.position, transform.position);
+            if (dist > 4.5f)
+            {
+                Debug.LogWarning($"Distance {dist}");
+                foreach(Blot blot in _blots)
+                {
+                    blot.GetConfused();
+                }
+                AudioManager.Instance.PlaySfx("blot_cry_2", false, false);
+                breakableObject.CancelAttack();
+                return;
+            }
+
+            _attackRoutine = StartCoroutine(AttackBreakableRoutine(breakableObject));
+        }
+
+        private IEnumerator AttackBreakableRoutine(BreakableObject breakableObject)
+        {
+            _isAttackAnimating = true;
+
+            MoveBlotsToAttackPositions(breakableObject.transform.position);
+
+            float timer = 0f;
+
+            while (timer < _attackApproachTimeout)
+            {
+                if (breakableObject == null)
+                {
+                    _isAttackAnimating = false;
+                    _attackRoutine = null;
+                    yield break;
+                }
+
+                if (HaveBlotsReachedAttackPositions())
+                {
+                    break;
+                }
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            int attackingBlotCount = 0;
+
+            for (int i = 0; i < _blots.Count; i++)
+            {
+                Blot blot = _blots[i];
+
+                if (blot == null)
+                {
+                    continue;
+                }
+
+                attackingBlotCount++;
+
+                float delay = i * _attackStagger;
+                blot.PlayAttackJump(breakableObject.transform.position, delay);
+            }
+
+            float totalAttackTime = _attackDuration + (_attackStagger * Mathf.Max(0, attackingBlotCount - 1));
+            yield return new WaitForSeconds(totalAttackTime);
+
+            if (breakableObject != null)
+            {
+                breakableObject.ApplyDamage(attackingBlotCount);
+            }
+
+            _attackTargets.Clear();
+            _isAttackAnimating = false;
+            _attackRoutine = null;
+        }
+
+        private void MoveBlotsToAttackPositions(Vector3 breakablePosition)
+        {
+            _attackTargets.Clear();
+
+            int count = _blots.Count;
+
+            if (count == 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                Blot blot = _blots[i];
+
+                if (blot == null || blot.NavMeshAgent == null || !blot.NavMeshAgent.isOnNavMesh)
+                {
+                    continue;
+                }
+
+                float angle = (Mathf.PI * 2f * i) / count;
+
+                Vector3 ringOffset = new Vector3(
+                    Mathf.Cos(angle) * _attackDistanceFromBlock,
+                    0f,
+                    Mathf.Sin(angle) * _attackDistanceFromBlock
+                );
+
+                Vector3 targetPosition = breakablePosition + ringOffset;
+
+                if (!TryGetNavMeshPoint(targetPosition, out Vector3 navMeshTarget))
+                {
+                    continue;
+                }
+
+                _attackTargets[blot] = navMeshTarget;
+
+                blot.NavMeshAgent.stoppingDistance = 0.15f;
+                blot.MoveBlot(navMeshTarget);
+            }
+        }
+
+        private bool HaveBlotsReachedAttackPositions()
+        {
+            if (_attackTargets.Count == 0)
+            {
+                return true;
+            }
+
+            foreach (KeyValuePair<Blot, Vector3> pair in _attackTargets)
+            {
+                Blot blot = pair.Key;
+                Vector3 target = pair.Value;
+
+                if (blot == null || blot.NavMeshAgent == null)
+                {
+                    continue;
+                }
+
+                if (blot.NavMeshAgent.pathPending)
+                {
+                    return false;
+                }
+
+                float distance = Vector3.Distance(blot.transform.position, target);
+
+                if (distance > _attackArriveDistance)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

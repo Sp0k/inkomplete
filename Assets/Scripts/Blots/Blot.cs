@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using GameManagement;
 using Interfaces;
@@ -51,6 +52,18 @@ namespace Blots
         [SerializeField] private Transform _carryTransform;
         public Transform CarryTransform => _carryTransform;
 
+        [Header("Attack Animation")]
+        [SerializeField] private float _attackDuration = 0.45f;
+        [SerializeField] private float _attackJumpHeight = 0.65f;
+        [SerializeField] private float _attackForwardDistance = 0.45f;
+        [SerializeField] private float _attackSquashAmount = 0.2f;
+        [SerializeField] private string _attackSfxRef;
+
+        private Coroutine _attackRoutine;
+        private bool _isAttackAnimating = false;
+        private Vector3 _basePivotLocalPosition;
+        private Vector3 _basePivotLocalScale;
+
         #region Unity Functions
 
         private void Awake()
@@ -60,10 +73,16 @@ namespace Blots
 
             if (_blotSpriteRenderer != null)
             {
-                    _baseRendererRotation = _blotSpriteRenderer.transform.localRotation;
+                _baseRendererRotation = _blotSpriteRenderer.transform.localRotation;
             }
 
             _previousPosition = transform.position;
+
+            if (_blotSpritePivot != null)
+            {
+                _basePivotLocalPosition = _blotSpritePivot.localPosition;
+                _basePivotLocalScale = _blotSpritePivot.localScale;
+            }
         }
 
         private void Start()
@@ -84,8 +103,12 @@ namespace Blots
             }
 
             UpdateBlotAppearance();
-            ApplySinCurveAnimation();
-        
+
+            if (!_isAttackAnimating)
+            {
+                ApplySinCurveAnimation();
+            }
+
             Quaternion rotation = transform.localRotation;
             rotation = Quaternion.Euler(rotation.x, 0f, rotation.z);
             transform.localRotation = rotation;
@@ -219,6 +242,107 @@ namespace Blots
             );
         }
 
+        public Coroutine PlayAttackJump(Vector3 targetWorldPosition, float delay = 0f)
+        {
+            if (_attackRoutine != null)
+            {
+                StopCoroutine(_attackRoutine);
+            }
+
+            _attackRoutine = StartCoroutine(AttackJumpRoutine(targetWorldPosition, delay));
+            return _attackRoutine;
+        }
+
+        private IEnumerator AttackJumpRoutine(Vector3 targetWorldPosition, float delay)
+        {
+            _isAttackAnimating = true;
+
+            if (delay > 0f)
+            {
+                yield return new WaitForSeconds(delay);
+            }
+
+            if (_blotSpritePivot == null)
+            {
+                _isAttackAnimating = false;
+                _attackRoutine = null;
+                yield break;
+            }
+
+            bool hasPlayedSfx = false;
+
+            Vector3 worldDirection = targetWorldPosition - transform.position;
+            worldDirection.y = 0f;
+
+            if (worldDirection.sqrMagnitude < 0.001f)
+            {
+                worldDirection = transform.forward;
+            }
+
+            worldDirection.Normalize();
+
+            if (_blotSpriteRenderer != null && Mathf.Abs(worldDirection.x) > _flipThreshold)
+            {
+                _blotSpriteRenderer.flipX = worldDirection.x < 0f;
+            }
+
+            Vector3 localDirection = transform.InverseTransformDirection(worldDirection);
+            localDirection.y = 0f;
+
+            if (localDirection.sqrMagnitude < 0.001f)
+            {
+                localDirection = Vector3.forward;
+            }
+
+            localDirection.Normalize();
+
+            float elapsed = 0f;
+            float duration = Mathf.Max(0.01f, _attackDuration);
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+
+                float t = Mathf.Clamp01(elapsed / duration);
+
+                if (!hasPlayedSfx && t >= 0.5f)
+                {
+                    hasPlayedSfx = true;
+
+                    AudioManager.Instance.PlaySfx(_attackSfxRef, false, true);
+                }
+
+                // Goes forward, up, then back down.
+                float arc = Mathf.Sin(t * Mathf.PI);
+
+                Vector3 forwardOffset = localDirection * (_attackForwardDistance * arc);
+                Vector3 jumpOffset = Vector3.up * (_attackJumpHeight * arc);
+
+                _blotSpritePivot.localPosition =
+                    _basePivotLocalPosition + forwardOffset + jumpOffset;
+
+                // Small squash/stretch effect.
+                float squash = Mathf.Sin(t * Mathf.PI * 2f);
+                float xScale = 1f + Mathf.Max(0f, squash) * _attackSquashAmount;
+                float yScale = 1f - Mathf.Max(0f, squash) * _attackSquashAmount;
+
+                _blotSpritePivot.localScale = new Vector3(
+                    _basePivotLocalScale.x * xScale,
+                    _basePivotLocalScale.y * yScale,
+                    _basePivotLocalScale.z
+                );
+
+                yield return null;
+            }
+
+            _blotSpritePivot.localPosition = _basePivotLocalPosition;
+            _blotSpritePivot.localScale = _basePivotLocalScale;
+            _blotSpritePivot.localRotation = _baseRendererRotation;
+
+            _isAttackAnimating = false;
+            _attackRoutine = null;
+        }
+
         #endregion
 
         #region Interaction
@@ -230,6 +354,18 @@ namespace Blots
                 RecruitBlot();
                 GameManager.Instance.UpdateBlotCount();
             }
+        }
+
+        public void GetConfused()
+        {
+            StartCoroutine(GetConfusedRoutine());
+        }
+
+        public IEnumerator GetConfusedRoutine()
+        {
+            CurrentState = BlotState.Confused;
+            yield return new WaitForSeconds(1f);
+            CurrentState = BlotState.Idle;
         }
 
         #endregion

@@ -16,7 +16,7 @@ namespace Player
             if (!context.performed) return;
             if (!CanClick) return;
 
-            if (_groundIndicator == null || !_groundIndicator.HasValidTarget || GameManager.Instance.HighlightedObject != null) return;
+            if (_groundIndicator == null || !_groundIndicator.HasValidTarget) return;
 
             Vector3 targetPosition = _groundIndicator.CurrentTargetPosition;
 
@@ -36,9 +36,7 @@ namespace Player
                 return;
             }
 
-            if (GameManager.Instance.HighlightedObject == null) return;
-
-            GameManager.Instance.HighlightedObject.Interact();
+            GameManager.Instance.TryInteractWithHighlightedObject();
         }
     }
 }
