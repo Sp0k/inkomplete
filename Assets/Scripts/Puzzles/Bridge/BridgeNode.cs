@@ -10,13 +10,14 @@ using UnityEngine.AI;
 
 public class BridgeNode : MonoBehaviour, IInteractable
 {
-    public GameManager GameManager;
     public PlayerControls PlayerControls;
 
     public bool IsInteractive { get; private set; } = true;
 
+    [Tooltip("This is both the start position and the parent to the blot points")]
     public GameObject BridgeGeometry;
     public Transform BridgeEnd;
+    public GroundTargetIndicator Cursor;
     private List<Transform> _blotPoints;
 
     public float DistanceForBlotToActivate = 1.5f;
@@ -24,10 +25,17 @@ public class BridgeNode : MonoBehaviour, IInteractable
     public float DistanceForBlotToDeactivate = 0.5f;
     private float _deactivationDistSquared;
 
-    public float CrossingSpeed = 10f;              // The time it takes for them to get to position
-    public float DelayBetweenBridgeBlots = 0.3f; // The time delay between each blot in the bridge
-    public float DelayBeforeCrossing = 1f;       // The time delay before the other blots start crossing
-    public float DelayBetweenBlots = 0.3f;       // The time delay before each blot not in the bridge 
+    [Tooltip("The time it takes for them to get to position")]
+    public float CrossingTime = 15f;
+    [Tooltip("The time delay between each blot in the bridge")]
+    public float DelayBetweenBridgeBlots = 0.5f;   
+    [Tooltip("The time delay before the other blots start crossing")]
+    public float DelayBeforeCrossing = 3f;         
+    [Tooltip("The time delay before each blot not in the bridge ")]
+    public float DelayBetweenBlots = 0.5f;
+
+    [Tooltip("This will reset the other side when crossing")]
+    public BridgeNode OtherSide;
 
     private bool _isBridging;
     private bool _canStartCrossing;
@@ -47,51 +55,21 @@ public class BridgeNode : MonoBehaviour, IInteractable
         _blotPoints = BridgeGeometry.GetComponentsInChildren<Transform>()
             .Where(t => t != BridgeGeometry.transform)
             .OrderBy(t =>
-                Mathf.Pow(transform.position.x - t.position.x, 2) +
-                Mathf.Pow(transform.position.z - t.position.z, 2))
+                Mathf.Pow(BridgeGeometry.transform.position.x - t.position.x, 2) +
+                Mathf.Pow(BridgeGeometry.transform.position.z - t.position.z, 2))
             .ToList();
-
-        if (GameManager == null)
-            GameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    public void Interact()
-    {
-        BridgeAcross();
-    }
-
-    private void BridgeAcross()
+    public void Update()
     {
         // Get distance data
-        var blotData = GameManager.PlayerBlots.Select(x => 
-            new BlotBridgeData() { 
-                Blot = x, 
-                StartDistanceSquared = Mathf.Pow(transform.position.x - x.transform.position.x, 2) + Mathf.Pow(transform.position.z - x.transform.position.z, 2),
+        var blotData = GameManager.Instance.PlayerBlots.Select(x =>
+            new BlotBridgeData()
+            {
+                Blot = x,
+                StartDistanceSquared = Mathf.Pow(BridgeGeometry.transform.position.x - x.transform.position.x, 2) + Mathf.Pow(BridgeGeometry.transform.position.z - x.transform.position.z, 2),
                 EndDistanceSquared = Mathf.Pow(BridgeEnd.position.x - x.transform.position.x, 2) + Mathf.Pow(BridgeEnd.position.z - x.transform.position.z, 2),
             });
-
-        // Bridge creation
-        if (blotData.Count(x => x.StartDistanceSquared < _activationDistSquared) >= _blotPoints.Count)
-        {
-            if (!_isBridging) 
-            {
-                _isBridging = true;
-
-                PlayerControls.CanClick = false;
-                BridgeGeometry.SetActive(true);
-
-                var firstPointPos = _blotPoints[0].position;
-                var closestBlots = GameManager.PlayerBlots
-                    .OrderBy(x => 
-                        Mathf.Pow(firstPointPos.x - x.transform.position.x, 2) + 
-                        Mathf.Pow(firstPointPos.z - x.transform.position.z, 2))
-                    .Take(_blotPoints.Count)
-                    .ToList();
-                _bridgeBlots = closestBlots;
-
-                StartCoroutine(CreateBridge(closestBlots));
-            }
-        }
 
         // Bridge crossing
         if (_canStartCrossing)
@@ -102,8 +80,8 @@ public class BridgeNode : MonoBehaviour, IInteractable
             foreach (BlotBridgeData blot in leftoverBlotData)
             {
                 if (blot.StartDistanceSquared >= _activationDistSquared)
-                    blot.Blot.MoveBlot(transform.position);
-                else 
+                    blot.Blot.MoveBlot(BridgeGeometry.transform.position);
+                else
                 {
                     blotsToCross.Add(blot.Blot);
                     _crossingBlots.Add(blot.Blot);
@@ -114,12 +92,13 @@ public class BridgeNode : MonoBehaviour, IInteractable
                 StartCoroutine(CrossBridge(blotsToCross));
         }
 
-        // Bridge creation
-        if (_isBridging && !_doneBridging && _crossedBlots.Count + _bridgeBlots.Count == GameManager.PlayerBlots.Count)
+        // Bridge destroy
+        if (_isBridging && _canStartCrossing && !_doneBridging && (_crossedBlots.Count + _bridgeBlots.Count == GameManager.Instance.PlayerBlots.Count))
         {
             StartCoroutine(DestroyBridge(_bridgeBlots));
             _doneBridging = true;
             PlayerControls.CanClick = true;
+            Cursor.TeleportTo(BridgeEnd.position);
         }
 
         // Reset nav mesh and colliders
@@ -137,6 +116,40 @@ public class BridgeNode : MonoBehaviour, IInteractable
         }
     }
 
+    public void Interact()
+    {
+        BridgeAcross();
+    }
+
+    private void BridgeAcross()
+    {
+        // Get distance data
+        var blotData = GameManager.Instance.PlayerBlots.Select(x => 
+            new BlotBridgeData() { 
+                Blot = x, 
+                StartDistanceSquared = Mathf.Pow(BridgeGeometry.transform.position.x - x.transform.position.x, 2) + Mathf.Pow(BridgeGeometry.transform.position.z - x.transform.position.z, 2),
+                EndDistanceSquared = Mathf.Pow(BridgeEnd.position.x - x.transform.position.x, 2) + Mathf.Pow(BridgeEnd.position.z - x.transform.position.z, 2),
+            });
+
+        // Bridge creation
+        _isBridging = true;
+
+        PlayerControls.CanClick = false;
+        BridgeGeometry.SetActive(true);
+        OtherSide?.ResetBridge();
+
+        var firstPointPos = _blotPoints[0].position;
+        var closestBlots = GameManager.Instance.PlayerBlots
+            .OrderBy(x => 
+                Mathf.Pow(firstPointPos.x - x.transform.position.x, 2) + 
+                Mathf.Pow(firstPointPos.z - x.transform.position.z, 2))
+            .Take(_blotPoints.Count)
+            .ToList();
+        _bridgeBlots = closestBlots;
+
+        StartCoroutine(CreateBridge(closestBlots));
+    }
+
     IEnumerator CrossBridge(List<Blot> blots)
     {
         foreach (Blot blot in blots)
@@ -148,7 +161,7 @@ public class BridgeNode : MonoBehaviour, IInteractable
 
             var blotTransform = blot.transform;
             var blotPath = new List<Vector3>() {
-                    transform.position,
+                    BridgeGeometry.transform.position,
                     new Vector3(_blotPoints[0].position.x, blotTransform.position.y, _blotPoints[0].position.z),
                     new Vector3(BridgeEnd.position.x, blotTransform.position.y, BridgeEnd.position.z),
                 };
@@ -171,7 +184,7 @@ public class BridgeNode : MonoBehaviour, IInteractable
 
             var blotTransform = bridgeBlots[i].transform;
             var blotPath = new List<Vector3>() { 
-                transform.position, 
+                BridgeGeometry.transform.position, 
                 new Vector3(_blotPoints[i].position.x, blotTransform.position.y, _blotPoints[i].position.z), 
                 _blotPoints[i].position 
             };
@@ -243,6 +256,16 @@ public class BridgeNode : MonoBehaviour, IInteractable
         }
 
         blob.position = to;
+    }
+
+    public void ResetBridge()
+    {
+        _isBridging = false;
+        _canStartCrossing = false;
+        _doneBridging = false;
+        _bridgeBlots = new();
+        _crossingBlots = new();
+        _crossedBlots = new();
     }
 }
 
