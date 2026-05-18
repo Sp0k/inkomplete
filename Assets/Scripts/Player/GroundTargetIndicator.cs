@@ -122,7 +122,7 @@ namespace Player
                 return;
             }
 
-            Vector3 cameraForward = _camera.transform.forward;
+            Vector3 cameraForward = _camera.transform.forward * 0;
             Vector3 cameraRight = _camera.transform.right;
 
             cameraForward.y = 0f;
