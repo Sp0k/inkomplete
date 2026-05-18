@@ -1,9 +1,10 @@
+using Interfaces;
 using Unity.AI.Navigation;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class Drawbridge : MonoBehaviour
+public class Drawbridge : MonoBehaviour, IInteractable
 {
+    public bool IsInteractive { get; private set; } = true;
     public NavMeshSurface Surface;
     public GameObject BridgeToObject;
     public float ForceMultiplier = 1f;
@@ -15,6 +16,11 @@ public class Drawbridge : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
+    }
+
+    public void Interact() 
+    {
+        PushObject();
     }
 
     public void PushObject()
@@ -29,12 +35,7 @@ public class Drawbridge : MonoBehaviour
 
         rb.isKinematic = false;
         rb.AddTorque(torqueAxis * ForceMultiplier, ForceMode.Impulse);
-    }
-
-    private void Update()
-    {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-            PushObject();
+        IsInteractive = false;
     }
 
     void OnCollisionEnter(Collision collision)

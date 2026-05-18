@@ -80,7 +80,9 @@ namespace GameManagement
 
         public void PlaySong(string songId)
         {
-
+            Sound song = _musicClips[0];
+            InializeSound(song);
+            song.Source.Play();
         }
 
         #endregion

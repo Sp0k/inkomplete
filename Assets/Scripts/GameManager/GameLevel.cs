@@ -23,6 +23,7 @@ namespace GameManagement
         {
             GameManager.Instance.CurrentLevel = this;
             GameManager.Instance.StartLevel();
+            AudioManager.Instance.PlaySong("level_music");
         }
 
         #endregion

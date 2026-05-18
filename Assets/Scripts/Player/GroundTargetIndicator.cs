@@ -83,9 +83,6 @@ namespace Player
             if (other.TryGetComponent<IInteractable>(out IInteractable interactable))
             {
                 if (!interactable.IsInteractive || !GameManager.Instance.SetHighlightedObject(interactable)) return;
-                Vector3 currentScale = transform.localScale;
-                Vector3 resize = new (currentScale.x * 2, currentScale.y, currentScale.z * 2);
-                transform.localScale = resize;
             }
         }
 
@@ -96,9 +93,6 @@ namespace Player
             if (other.TryGetComponent<IInteractable>(out IInteractable interactable) && interactable == GameManager.Instance.HighlightedObject)
             {
                 if (!GameManager.Instance.ClearHighlightedObject()) return;
-                Vector3 currentScale = transform.localScale;
-                Vector3 resize = new (currentScale.x / 2, currentScale.y, currentScale.z / 2);
-                transform.localScale = resize;
             }
         }
 
@@ -122,7 +116,7 @@ namespace Player
                 return;
             }
 
-            Vector3 cameraForward = _camera.transform.forward;
+            Vector3 cameraForward = _camera.transform.forward * 0;
             Vector3 cameraRight = _camera.transform.right;
 
             cameraForward.y = 0f;
@@ -299,6 +293,17 @@ namespace Player
             {
                 renderer.enabled = visible;
             }
+        }
+
+        public void TeleportTo(Vector3 worldPosition)
+        {
+            if (!TryGetValidGroundPosition(worldPosition, out Vector3 validPosition))
+            {
+                Debug.Log("TeleportTo: no valid ground position");
+                return;
+            }
+
+            SetIndicatorPosition(validPosition); 
         }
 
         #endregion
