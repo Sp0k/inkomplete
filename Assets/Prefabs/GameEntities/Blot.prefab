@@ -216,6 +216,7 @@ MonoBehaviour:
       w: 0
   _sfxRefs:
   - blot_cry_1
+  - blot_cry_2
   _carryTransform: {fileID: 5991619897899149226}
 --- !u!65 &8711022262568160371
 BoxCollider:

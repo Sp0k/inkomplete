@@ -129,7 +129,8 @@ namespace Blots
             CurrentState = BlotState.Moving;
             if (GameManager.Instance.PlayerBlots.Count == 1 || UnityEngine.Random.Range(0.0f, 1.0f) >= 0.45f)
             {
-                AudioManager.Instance.PlaySfx(_sfxRefs[0], true, true);
+                int sfxIdx = (int)UnityEngine.Random.Range(0, _sfxRefs.Count);
+                AudioManager.Instance.PlaySfx(_sfxRefs[sfxIdx], true, true);
             }
         }
 
