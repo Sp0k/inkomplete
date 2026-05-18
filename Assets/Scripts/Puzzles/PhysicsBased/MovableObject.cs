@@ -23,6 +23,8 @@ namespace Puzzle.PhysicsBased
             if (IsPlaced) return;
 
             IsInteractive = !isCarried;
+            gameObject.layer = 3;
+            GameManager.Instance.CurrentLevel.RebakeNavMesh();
         }
 
         public void PlaceAtPivot(Transform pivot)
