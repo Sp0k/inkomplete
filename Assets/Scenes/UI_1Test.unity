@@ -1448,6 +1448,46 @@ PrefabInstance:
       propertyPath: m_ExcludeLayers.m_Bits
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_ActionId
+      value: ee36651c-72dc-48f3-9507-55361b6230bf
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_ActionName
+      value: 'Player/ToggleControlsPanel[/Keyboard/tab]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8655159401705936263}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleDrawer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ControlsDisplayWidget, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496375002660264270, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 2267365830056986926, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1893,6 +1933,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dc88c83588d6f0469b6f637e09253a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlotCounterWidget
+--- !u!114 &8655159401705936263 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4099863553908095648, guid: 97fa47e21c9b3dd4bb5f4751864a2281, type: 3}
+  m_PrefabInstance: {fileID: 8655159401705936261}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73b7a0b6f4da7e64f986b121e355f80a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlsDisplayWidget
 --- !u!1001 &9053108614436384359
 PrefabInstance:
   m_ObjectHideFlags: 0
