@@ -141,7 +141,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <sprite name="buttonicon_Esc"> | <sprite name="buttonicon_menubtn"> - Show/Hide
+  m_text: <sprite name="buttonicon_tab"> | <sprite name="buttonicon_menubtn"> - Show/Hide
     Controls
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 08ca86e2d1dea8943a698ec08cea8a62, type: 2}
