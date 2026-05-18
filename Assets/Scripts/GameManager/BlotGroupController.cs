@@ -114,9 +114,9 @@ namespace GameManagement
 
                 if (Physics.Raycast(worldTarget + new Vector3(0f, 10f, 0f), Vector3.down, out RaycastHit hit))
                 {
-                    if (hit.transform.gameObject.TryGetComponent<MovableObject>(out MovableObject _))
+                    if (hit.transform.gameObject.TryGetComponent<MovableObject>(out MovableObject movableObject))
                     {
-                        continue;
+                        if (movableObject.IsInteractive) continue;
                     }
                 }
 
@@ -295,13 +295,15 @@ namespace GameManagement
                 _attachedRigidbody = null;
             }
 
-            _attachedMoveable.gameObject.TryGetComponent<MeshRenderer>(out MeshRenderer renderer);
-            var col = renderer.material.color;
-            col.a = 1f;
-            renderer.material.color = col;
+            SetMoveableAlpha(_attachedMoveable, 1f);
 
             _attachedMoveable = null;
             _moveableOwner = null;
+
+            if (movableObject != null)
+            {
+                movableObject.SetCarried(false);
+            }
         }
 
         public bool HasAttachedMoveable()
@@ -375,10 +377,15 @@ namespace GameManagement
 
             _isPickupAnimating = false;
             _pickupRoutine = null;
-            _attachedMoveable.gameObject.TryGetComponent<MeshRenderer>(out MeshRenderer renderer);
-            var col = renderer.material.color;
-            col.a = 0.5f;
-            renderer.material.color = col;
+
+            MovableObject movableObject = _attachedMoveable.GetComponent<MovableObject>();
+
+            if (movableObject != null)
+            {
+                movableObject.SetCarried(true);
+            }
+
+            SetMoveableAlpha(_attachedMoveable, 0.5f);
         }
 
         private void MoveBlotsToPickupPositions(Vector3 moveablePosition, Blot owner)
@@ -523,6 +530,55 @@ namespace GameManagement
             }
         }
 
+        public bool TryPlaceAttachedMoveable(MovableObject movableObject, Transform pivot)
+        {
+            if (movableObject == null || pivot == null)
+            {
+                return false;
+            }
 
+            if (_isPickupAnimating)
+            {
+                return false;
+            }
+
+            if (_attachedMoveable != movableObject.transform)
+            {
+                return false;
+            }
+
+            if (_attachedRigidbody != null)
+            {
+                _attachedRigidbody.isKinematic = true;
+                _attachedRigidbody.linearVelocity = Vector3.zero;
+                _attachedRigidbody.angularVelocity = Vector3.zero;
+                _attachedRigidbody = null;
+            }
+
+            movableObject.PlaceAtPivot(pivot);
+
+            _attachedMoveable = null;
+            _moveableOwner = null;
+            _pickupTargets.Clear();
+
+            return true;
+        }
+
+        private void SetMoveableAlpha(Transform moveableTransform, float alpha)
+        {
+            if (moveableTransform == null)
+            {
+                return;
+            }
+
+            MeshRenderer[] renderers = moveableTransform.GetComponentsInChildren<MeshRenderer>();
+
+            foreach (MeshRenderer renderer in renderers)
+            {
+                Color col = renderer.material.color;
+                col.a = alpha;
+                renderer.material.color = col;
+            }
+        }
     }
 }

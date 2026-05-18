@@ -2,6 +2,7 @@ using Blots;
 using Interfaces;
 using System.Collections.Generic;
 using UnityEngine;
+using Puzzle.PhysicsBased;
 
 namespace GameManagement
 {
@@ -22,6 +23,9 @@ namespace GameManagement
         [SerializeField] private BlotCounterWidget m_BlotCounter;
 
         public List<Blot> PlayerBlots => _playerBlots;
+
+        private PuzzleCompletion _activePuzzleCompletion;
+
 
         private static GameManager _instance;
         public static GameManager Instance
@@ -159,12 +163,44 @@ namespace GameManagement
 
             if (_playerBlotGroup.HasAttachedMoveable())
             {
-                _playerBlotGroup.ClearMoveable();
+                return;
             }
-            else
+
+            _playerBlotGroup.AssignMoveableToPivot(moveableTransform);
+        }
+
+        public bool TryPlaceMovableBlock(MovableObject movableObject, Transform pivot)
+        {
+            if (_playerBlotGroup == null)
             {
-                _playerBlotGroup.AssignMoveableToPivot(moveableTransform);
+                Debug.LogWarning("No BlotGroupController assigned to the GameManager.");
+                return false;
             }
+
+            return _playerBlotGroup.TryPlaceAttachedMoveable(movableObject, pivot);
+        }
+
+        public void SetActivePuzzleCompletion(PuzzleCompletion puzzleCompletion)
+        {
+            _activePuzzleCompletion = puzzleCompletion;
+        }
+
+        public void ClearActivePuzzleCompletion(PuzzleCompletion puzzleCompletion)
+        {
+            if (_activePuzzleCompletion == puzzleCompletion)
+            {
+                _activePuzzleCompletion = null;
+            }
+        }
+
+        public bool TryCompleteActivePuzzle()
+        {
+            if (_activePuzzleCompletion == null)
+            {
+                return false;
+            }
+
+            return _activePuzzleCompletion.TryCompletePuzzle();
         }
 
         #endregion

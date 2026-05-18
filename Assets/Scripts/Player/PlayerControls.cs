@@ -31,6 +31,11 @@ namespace Player
         {
             if (!context.performed) return;
 
+            if (GameManager.Instance.TryCompleteActivePuzzle())
+            {
+                return;
+            }
+
             if (GameManager.Instance.HighlightedObject == null) return;
 
             GameManager.Instance.HighlightedObject.Interact();
