@@ -83,9 +83,6 @@ namespace Player
             if (other.TryGetComponent<IInteractable>(out IInteractable interactable))
             {
                 if (!interactable.IsInteractive || !GameManager.Instance.SetHighlightedObject(interactable)) return;
-                Vector3 currentScale = transform.localScale;
-                Vector3 resize = new (currentScale.x * 2, currentScale.y, currentScale.z * 2);
-                transform.localScale = resize;
             }
         }
 
@@ -96,9 +93,6 @@ namespace Player
             if (other.TryGetComponent<IInteractable>(out IInteractable interactable) && interactable == GameManager.Instance.HighlightedObject)
             {
                 if (!GameManager.Instance.ClearHighlightedObject()) return;
-                Vector3 currentScale = transform.localScale;
-                Vector3 resize = new (currentScale.x / 2, currentScale.y, currentScale.z / 2);
-                transform.localScale = resize;
             }
         }
 

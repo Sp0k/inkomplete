@@ -1,20 +1,19 @@
 using Blots;
 using GameManagement;
+using Interfaces;
 using Player;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.AI.Navigation;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
-public class BridgeNode : MonoBehaviour
+public class BridgeNode : MonoBehaviour, IInteractable
 {
     public GameManager GameManager;
     public PlayerControls PlayerControls;
+
+    public bool IsInteractive { get; private set; } = true;
 
     public GameObject BridgeGeometry;
     public Transform BridgeEnd;
@@ -56,7 +55,12 @@ public class BridgeNode : MonoBehaviour
             GameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    void Update()
+    public void Interact()
+    {
+        BridgeAcross();
+    }
+
+    private void BridgeAcross()
     {
         // Get distance data
         var blotData = GameManager.PlayerBlots.Select(x => 
@@ -69,9 +73,7 @@ public class BridgeNode : MonoBehaviour
         // Bridge creation
         if (blotData.Count(x => x.StartDistanceSquared < _activationDistSquared) >= _blotPoints.Count)
         {
-            // TODO: Trigger Bridge on input
-
-            if (true && !_isBridging) 
+            if (!_isBridging) 
             {
                 _isBridging = true;
 
