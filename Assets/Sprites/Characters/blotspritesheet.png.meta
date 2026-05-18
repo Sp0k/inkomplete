@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: blotspritesheet_0
+      name: blotsprite_idle
       rect:
         serializedVersion: 2
         x: 43
@@ -132,7 +132,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotspritesheet_1
+      name: blotsprite_exclamation
       rect:
         serializedVersion: 2
         x: 310
@@ -154,7 +154,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotspritesheet_2
+      name: blotsprite_confused
       rect:
         serializedVersion: 2
         x: 534
@@ -176,7 +176,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotspritesheet_3
+      name: blotsprite_jumping
       rect:
         serializedVersion: 2
         x: 21
@@ -198,7 +198,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotspritesheet_4
+      name: blotsprite_moving
       rect:
         serializedVersion: 2
         x: 275
@@ -220,7 +220,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotspritesheet_5
+      name: blotsprite_falling
       rect:
         serializedVersion: 2
         x: 549
@@ -242,7 +242,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotspritesheet_6
+      name: blotsprite_hurt
       rect:
         serializedVersion: 2
         x: 35
@@ -264,7 +264,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: blotspritesheet_7
+      name: blotsprite_dead
       rect:
         serializedVersion: 2
         x: 310
@@ -285,6 +285,72 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: blotsprite_lost
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 726
+        width: 141
+        height: 272
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa3f17690529e834ebb0411b90995b37
+      internalID: -1699068132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blotsprite_carrying
+      rect:
+        serializedVersion: 2
+        x: 766
+        y: 469
+        width: 172
+        height: 219
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9fe3c27ba6f22b49945c1927bdb9665
+      internalID: -1732739801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blotsprite_icon
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 230
+        width: 154
+        height: 215
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0109718cd9bd6744f89c5bbb48ccf3c7
+      internalID: -1340132566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -301,16 +367,19 @@ TextureImporter:
       - key: SpriteEditor.SliceOnImport
         value: True
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":256.0,"y":256.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":true,"gridCellCount":{"x":4.0,"y":4.0},"gridSpriteSize":{"x":256.0,"y":256.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":1,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      blotspritesheet_0: 244311761
-      blotspritesheet_1: 889238679
-      blotspritesheet_2: -1017961020
-      blotspritesheet_3: 881012061
-      blotspritesheet_4: 1081840633
-      blotspritesheet_5: 866228827
-      blotspritesheet_6: -1802134202
-      blotspritesheet_7: -769187428
+      blotsprite_carrying: -1732739801
+      blotsprite_confused: -1017961020
+      blotsprite_dead: -769187428
+      blotsprite_exclamation: 889238679
+      blotsprite_falling: 866228827
+      blotsprite_hurt: -1802134202
+      blotsprite_icon: -1340132566
+      blotsprite_idle: 244311761
+      blotsprite_jumping: 881012061
+      blotsprite_lost: -1699068132
+      blotsprite_moving: 1081840633
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
