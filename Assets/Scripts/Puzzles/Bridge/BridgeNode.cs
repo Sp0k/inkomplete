@@ -34,12 +34,12 @@ public class BridgeNode : MonoBehaviour, IInteractable
     [Tooltip("The time delay before each blot not in the bridge ")]
     public float DelayBetweenBlots = 0.5f;
 
-    [Tooltip("This will reset the other side when crossing")]
-    public BridgeNode OtherSide;
-
     private bool _isBridging;
     private bool _canStartCrossing;
     private bool _doneBridging;
+
+    [Tooltip("This is a reference to the other direction of the bridge for resetting purposes")]
+    public BridgeNode OtherBridge;
 
     private List<Blot> _bridgeBlots = new();
     private List<Blot> _crossingBlots = new();
@@ -50,7 +50,6 @@ public class BridgeNode : MonoBehaviour, IInteractable
     {
         _activationDistSquared = DistanceForBlotToActivate * DistanceForBlotToActivate;
         _deactivationDistSquared = DistanceForBlotToDeactivate * DistanceForBlotToDeactivate;
-        BridgeGeometry.SetActive(false);
 
         _blotPoints = BridgeGeometry.GetComponentsInChildren<Transform>()
             .Where(t => t != BridgeGeometry.transform)
@@ -92,15 +91,6 @@ public class BridgeNode : MonoBehaviour, IInteractable
                 StartCoroutine(CrossBridge(blotsToCross));
         }
 
-        // Bridge destroy
-        if (_isBridging && _canStartCrossing && !_doneBridging && (_crossedBlots.Count + _bridgeBlots.Count == GameManager.Instance.PlayerBlots.Count))
-        {
-            StartCoroutine(DestroyBridge(_bridgeBlots));
-            _doneBridging = true;
-            PlayerControls.CanClick = true;
-            Cursor.TeleportTo(BridgeEnd.position);
-        }
-
         // Reset nav mesh and colliders
         foreach (BlotBridgeData blot in blotData.Where(x => !_crossedBlots.Contains(x.Blot)))
         {
@@ -113,6 +103,15 @@ public class BridgeNode : MonoBehaviour, IInteractable
             blot.Blot.MoveBlot(BridgeEnd.position);
 
             _crossedBlots.Add(blot.Blot);
+        }
+
+        // Bridge destroy
+        if (_isBridging && _canStartCrossing && !_doneBridging && (_crossedBlots.Count + _bridgeBlots.Count == GameManager.Instance.PlayerBlots.Count))
+        {
+            StartCoroutine(DestroyBridge(_bridgeBlots));
+            _doneBridging = true;
+            PlayerControls.CanClick = true;
+            Cursor.TeleportTo(BridgeEnd.position);
         }
     }
 
@@ -135,8 +134,7 @@ public class BridgeNode : MonoBehaviour, IInteractable
         _isBridging = true;
 
         PlayerControls.CanClick = false;
-        BridgeGeometry.SetActive(true);
-        OtherSide?.ResetBridge();
+        OtherBridge?.ResetBridge();
 
         var firstPointPos = _blotPoints[0].position;
         var closestBlots = GameManager.Instance.PlayerBlots
