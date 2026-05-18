@@ -69,4 +69,10 @@ MonoBehaviour:
     Pitch: 1
     Loop: 0
     Source: {fileID: 0}
-  _musicClips: []
+  _musicClips:
+  - Id: level_music
+    Clip: {fileID: 8300000, guid: c7cc9e78176dd47c3935f6c5405b4d46, type: 3}
+    Volume: 1
+    Pitch: 1
+    Loop: 1
+    Source: {fileID: 0}
