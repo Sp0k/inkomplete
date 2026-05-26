@@ -15,6 +15,9 @@ namespace Puzzle.PhysicsBased
         [Header("Placement")]
         [SerializeField] private Transform _pivot;
 
+        [Header("Trigger")]
+        [SerializeField] private bool _isFinalStep = false;
+
         private Blot _currentCarryingBlot;
         private bool _isCompleted = false;
 
@@ -71,7 +74,7 @@ namespace Puzzle.PhysicsBased
             _attachedPuzzlePiece.CompletePuzzle();
             GameManager.Instance.ClearActivePuzzleCompletion(this);
 
-            if (!string.IsNullOrEmpty(_sfxRef))
+            if (_isFinalStep)
             {
                 AudioManager.Instance.PlaySfx(_sfxRef, false, false);
             }

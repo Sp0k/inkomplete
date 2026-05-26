@@ -11,6 +11,18 @@ namespace Puzzle.PhysicsBased
 
         public Transform PuzzleGroup;
 
+        public Rigidbody _rigidBody;
+
+        private void Start()
+        {
+            if (_rigidBody == null)
+            {
+                _rigidBody = GetComponent<Rigidbody>();
+            }
+
+            _rigidBody.useGravity = true;
+        }
+
         public void Interact()
         {
             if (!IsInteractive || IsPlaced) return;
@@ -38,12 +50,10 @@ namespace Puzzle.PhysicsBased
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
 
-            Rigidbody rb = GetComponent<Rigidbody>();
-            if (rb != null)
+            if (_rigidBody != null)
             {
-                rb.isKinematic = true;
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
+                _rigidBody.linearVelocity = Vector3.zero;
+                _rigidBody.angularVelocity = Vector3.zero;
             }
 
             gameObject.layer = 0;
@@ -51,6 +61,8 @@ namespace Puzzle.PhysicsBased
 
         public void CompletePuzzle()
         {
+            _rigidBody.isKinematic = true;
+            _rigidBody.useGravity = false;
             IsInteractive = false;
             gameObject.layer = 6;
         }

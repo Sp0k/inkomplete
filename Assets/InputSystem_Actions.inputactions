@@ -77,6 +77,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "QuitLevel",
+                    "type": "Button",
+                    "id": "40381135-2b71-4532-9299-e4f6dc045644",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -237,7 +246,7 @@
                 {
                     "name": "",
                     "id": "9934dae9-9d67-4a1c-9398-081381eb066e",
-                    "path": "<Gamepad>/select",
+                    "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -253,6 +262,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "ToggleControlsPanel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6f975c1d-caeb-46ee-9d73-0ba4266df5dd",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QuitLevel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8eda72a0-9de4-4b53-8b04-9a05971c2e78",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QuitLevel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

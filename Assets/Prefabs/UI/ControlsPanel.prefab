@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -41}
-  m_SizeDelta: {x: 0, y: -82}
+  m_AnchoredPosition: {x: 0, y: -77}
+  m_SizeDelta: {x: 0, y: -9.999992}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3905494472442616994
 CanvasRenderer:
@@ -299,7 +299,11 @@ MonoBehaviour:
     - Zoom Out
 
     <sprite name="buttonicon_ctrl"> | <sprite name="buttonicon_RT">
-    - Zoom In'
+    - Zoom In
+
+
+    <sprite name="buttonicon_Q"> | <sprite name="buttonicon_select">
+    - Quit Level'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 08ca86e2d1dea8943a698ec08cea8a62, type: 2}
   m_sharedMaterial: {fileID: 3024304628569997719, guid: 08ca86e2d1dea8943a698ec08cea8a62, type: 2}

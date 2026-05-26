@@ -100,7 +100,11 @@ namespace Blots
             if (!_navMeshAgent.enabled)
                 return;
 
-            if (CurrentState == BlotState.Moving && !_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
+            if (CurrentState == BlotState.Moving
+                && _navMeshAgent.isOnNavMesh
+                && _navMeshAgent.isActiveAndEnabled
+                && !_navMeshAgent.pathPending
+                && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
             {
                 CurrentState = BlotState.Idle;
             }
