@@ -27,7 +27,6 @@ namespace GameManagement
 
         private PuzzleCompletion _activePuzzleCompletion;
 
-
         private static GameManager _instance;
         public static GameManager Instance
         {
@@ -47,6 +46,8 @@ namespace GameManagement
                 return _instance;
             }
         }
+
+        public int TotalBlotsInLevel => _blotsInLevel.Count;
 
         #region Unity Functions
 

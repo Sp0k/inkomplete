@@ -97,6 +97,9 @@ namespace Blots
 
         private void Update()
         {
+            if (!_navMeshAgent.enabled)
+                return;
+
             if (CurrentState == BlotState.Moving
                 && _navMeshAgent.isOnNavMesh
                 && _navMeshAgent.isActiveAndEnabled
