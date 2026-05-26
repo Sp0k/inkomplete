@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GameManagement;
@@ -34,6 +35,7 @@ namespace Blots
         [Header("Blot State")]
         public BlotState CurrentState { get; private set; } = BlotState.Idle;
         public bool IsInteractive { get; private set; } = true;
+        public bool IsCarrying { get; set; } = false;
 
         [Header("Blot Appearance")]
         [Tooltip("List of sprites corresponding to each BlotState. Ensure the order matches the BlotState enum.")]
@@ -107,6 +109,15 @@ namespace Blots
                 && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
             {
                 CurrentState = BlotState.Idle;
+            }
+
+            if (CurrentState == BlotState.Moving && IsCarrying)
+            {
+                _navMeshAgent.speed = _speed / Math.Clamp(5 - GameManager.Instance.PlayerBlots.Count, 1, 5);
+            }
+            else if (_navMeshAgent.speed != _speed)
+            {
+                _navMeshAgent.speed = _speed;
             }
 
             UpdateBlotAppearance();

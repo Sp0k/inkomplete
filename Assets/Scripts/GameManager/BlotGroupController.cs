@@ -245,6 +245,11 @@ namespace GameManagement
                 return;
             }
 
+            foreach (Blot b in GameManager.Instance.PlayerBlots)
+            {
+                b.IsCarrying = true;
+            }
+
             _pickupRoutine = StartCoroutine(PickupMoveableRoutine(moveableObj, closestBlot));
         }
 
@@ -566,6 +571,11 @@ namespace GameManagement
             }
 
             movableObject.PlaceAtPivot(pivot);
+
+            foreach (Blot b in GameManager.Instance.PlayerBlots)
+            {
+                b.IsCarrying = false;
+            }
 
             _attachedMoveable = null;
             _moveableOwner = null;
