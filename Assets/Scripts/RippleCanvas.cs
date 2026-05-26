@@ -303,6 +303,7 @@ public class RippleCanvas : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        Debug.Log("Start canvas");
         StartAnimation();
     }
 }
