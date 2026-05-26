@@ -3073,10 +3073,10 @@ MonoBehaviour:
     - {fileID: 2800000, guid: cf6a17d6ab97de14984cf6c108dddb61, type: 3}
     - {fileID: 2800000, guid: 9846883d90e6fec468812ef2cae96285, type: 3}
     - {fileID: 2800000, guid: 6011214c2c7204640a405173ab87db87, type: 3}
-  amplitude: 0.2
-  speed: 2
-  frequency: 1
-  spatialDamping: 2
+  amplitude: 0.04
+  speed: 0.4
+  frequency: 5
+  spatialDamping: 10
   timeDamping: 0.8
   maxRippleAge: 4
 --- !u!23 &663324599
