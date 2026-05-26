@@ -14,7 +14,7 @@ public class ActionButton : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Level-1");
+        SceneManager.LoadScene("Level-1 1");
     }
 
     public void Quit()

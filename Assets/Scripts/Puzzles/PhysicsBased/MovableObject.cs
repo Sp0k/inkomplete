@@ -61,7 +61,7 @@ namespace Puzzle.PhysicsBased
 
         public void CompletePuzzle()
         {
-            _rigidBody.isKinematic = false;
+            _rigidBody.isKinematic = true;
             _rigidBody.useGravity = false;
             IsInteractive = false;
             gameObject.layer = 6;
