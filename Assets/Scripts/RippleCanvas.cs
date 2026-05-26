@@ -1,5 +1,6 @@
 using Blots;
 using GameManagement;
+using Interfaces;
 using Player;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,10 +12,12 @@ using UnityEngine.InputSystem;
 using UnityEngine.Splines;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class RippleCanvas : MonoBehaviour
+public class RippleCanvas : MonoBehaviour, IInteractable
 {
     // ── Singleton ──────────────────────────────────────────────────────────
     public static RippleCanvas Instance { get; private set; }
+
+    public bool IsInteractive => true;
 
     // ── Inspector ──────────────────────────────────────────────────────────
     public PlayerControls PlayerControls;
@@ -97,22 +100,10 @@ public class RippleCanvas : MonoBehaviour
         _meshRenderer.material.mainTexture = _displayedImage;
     }
 
-    private int _countDown = 10;
-
     private void Update()
     {
         PruneOldRipples();
         if (_ripples.Count > 0) DisplaceMesh();
-
-        // TODO: Fix input system
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            _countDown -= 1;
-            Debug.Log(_countDown);
-
-            if (_countDown == 0) 
-                StartAnimation();
-        }
     }
 
     private void StartAnimation()
@@ -308,6 +299,11 @@ public class RippleCanvas : MonoBehaviour
         copy.Apply();
 
         _displayedImage = copy;
+    }
+
+    public void Interact()
+    {
+        StartAnimation();
     }
 }
 
