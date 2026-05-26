@@ -49,7 +49,7 @@ public class CameraControls : MonoBehaviour
             sideOffset += _tiltStrength;
         }
 
-        offset = new Vector3(sideOffset, 0f, depthOffset);
+        offset = new Vector3(sideOffset, 3f, depthOffset);
     }
 
     private void Update()
@@ -69,7 +69,7 @@ public class CameraControls : MonoBehaviour
 
         SetOffset();
 
-        targetPosition = new Vector3(center.x, transform.position.y, center.z) + offset;
+        targetPosition = new Vector3(center.x, center.y, center.z) + offset;
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime);
     }
 }

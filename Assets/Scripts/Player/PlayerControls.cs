@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using GameManagement;
+using UnityEngine.SceneManagement;
 
 namespace Player
 {
     public class PlayerControls : MonoBehaviour
     {
         public bool CanClick = true;
+
+        [SerializeField] private ControlsDisplayWidget _widget;
 
         [SerializeField] private GroundTargetIndicator _groundIndicator;
         private Vector3 prevPos = Vector3.zero;
@@ -37,6 +40,23 @@ namespace Player
             }
 
             GameManager.Instance.TryInteractWithHighlightedObject();
+        }
+
+        public void OnQuitLevel(InputAction.CallbackContext context)
+        {
+            if (!context.performed) return;
+
+            SceneManager.LoadScene("MainMenu");
+        }
+
+        public void OnToggleDrawer(InputAction.CallbackContext context)
+        {
+            if (!context.performed) return;
+
+            if (_widget != null)
+            {
+                _widget.ToggleDrawer();
+            }
         }
     }
 }
