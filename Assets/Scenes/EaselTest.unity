@@ -135,6 +135,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1535470105414941995, guid: 5fb19c539b129411aa595a52c89665e9, type: 3}
   m_PrefabInstance: {fileID: 2174406490437931271}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &216887399 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2394080249776564477, guid: 3b874a4dc4afe446ab282a8666f50fe6, type: 3}
+  m_PrefabInstance: {fileID: 9001902125197393}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf2f2169b360f4209a419c379e5c6d4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerControls
 --- !u!1 &304685903
 GameObject:
   m_ObjectHideFlags: 0
@@ -1090,6 +1101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b241a8667cc4be44c8932cc54e35704f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RippleCanvas
+  PlayerControls: {fileID: 216887399}
   width: 10
   height: 6
   columns: 80
@@ -1105,7 +1117,6 @@ MonoBehaviour:
     - {fileID: 2800000, guid: 29db0c007db20d2449d06df0229a4abc, type: 3}
     - {fileID: 2800000, guid: 8a5162f165d35d34ebcdb1d03774b8c1, type: 3}
     - {fileID: 2800000, guid: 6231ec5d4954c6046914baf9708a611d, type: 3}
-  BlotsTotal: 1
   amplitude: 0.2
   speed: 2
   frequency: 1

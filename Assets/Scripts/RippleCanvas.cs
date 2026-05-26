@@ -1,16 +1,15 @@
+using Blots;
+using GameManagement;
+using Player;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.Splines;
 
-/// <summary>
-/// Generates a mesh rectangle and simulates spammable ripple effects using wave superposition.
-/// Waves add together (constructive/destructive interference) just like real wave physics.
-///
-/// Usage:
-///   RippleCanvas.Instance.Spawn(worldPosition);  // from anywhere
-///   or get a reference and call ripple.Spawn(worldPosition);
-/// </summary>
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class RippleCanvas : MonoBehaviour
 {
@@ -18,6 +17,8 @@ public class RippleCanvas : MonoBehaviour
     public static RippleCanvas Instance { get; private set; }
 
     // ── Inspector ──────────────────────────────────────────────────────────
+    public PlayerControls PlayerControls;
+
     [Header("Canvas Mesh")]
     [Tooltip("Width of the canvas in world units.")]
     public float width = 10f;
@@ -32,8 +33,6 @@ public class RippleCanvas : MonoBehaviour
     public int rows = 50;
 
     public List<CanvasImage> canvasImages;
-
-    public int BlotsTotal = 1;
 
     [Header("Ripple Physics")]
     [Tooltip("How tall the peak of a single ripple is.")]
@@ -61,6 +60,13 @@ public class RippleCanvas : MonoBehaviour
     private Vector3[] _baseVertices;   // flat resting positions
     private Vector3[] _vertices;       // live displaced positions
 
+    // ── Image related ──────────────────────────────────────────────────────
+    private CanvasImage _selectedArt;
+    private Texture2D _originalImage;
+    private Texture2D _displayedImage;
+    private float _opacity = 0f;
+    private float _opacityStep = 0f;
+
     private struct RippleSource
     {
         public Vector2 origin;   // XZ position in mesh-local space
@@ -69,7 +75,6 @@ public class RippleCanvas : MonoBehaviour
 
     private readonly List<RippleSource> _ripples = new();
 
-    // ── Unity lifecycle ────────────────────────────────────────────────────
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -78,39 +83,112 @@ public class RippleCanvas : MonoBehaviour
         BuildMesh();
 
         var col = gameObject.AddComponent<MeshCollider>();
+        col.convex = true;
+        col.isTrigger = true;
         col.sharedMesh = _mesh;
 
-        // var selectedImage = canvasImages[Random.Range(0, canvasImages.Count)];
         _meshRenderer = GetComponent<MeshRenderer>();
-        _meshRenderer.material.mainTexture = canvasImages[0].stages[3]; // = selectedImage[3];
+        _selectedArt = canvasImages[Random.Range(0, canvasImages.Count)];
+
+        _originalImage = _selectedArt.stages[0];
+        _displayedImage = _originalImage;
+
+        SetOpacity();
+        _meshRenderer.material.mainTexture = _displayedImage;
     }
+
+    private int _countDown = 10;
 
     private void Update()
     {
         PruneOldRipples();
         if (_ripples.Count > 0) DisplaceMesh();
 
+        // TODO: Fix input system
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Vector2 screenPos = Mouse.current.position.ReadValue();
-            Ray ray = Camera.main.ScreenPointToRay(screenPos);
+            _countDown -= 1;
+            Debug.Log(_countDown);
 
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                RippleCanvas.Instance.Spawn(hit.point);
-            }
+            if (_countDown == 0) 
+                StartAnimation();
         }
     }
 
-    // ── Public API ─────────────────────────────────────────────────────────
+    private void StartAnimation()
+    {
+        PlayerControls.CanClick = false;
 
-    /// <summary>
-    /// Spawns a ripple at the given world-space position.
-    /// Safe to call every frame — waves superpose correctly.
-    /// </summary>
+        var maxBlots = GameManager.Instance.TotalBlotsInLevel;
+
+        var blotCount = GameManager.Instance.PlayerBlots.Count;
+        _opacityStep = 1.0f / blotCount;
+
+        float ratio = (float)blotCount / maxBlots;
+        int imageIndex = (int)(ratio * 4);
+        _originalImage = _selectedArt.stages[imageIndex > 3 ? 3 : imageIndex];
+        _displayedImage = _originalImage;
+
+        StartCoroutine(MoveObjectsToTarget(GameManager.Instance.PlayerBlots.Select(x => x.gameObject), transform, 1.5f, 0.5f, 3f));
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent<Blot>(out var blot))
+        {
+            other.gameObject.SetActive(false);
+
+            Instance.Spawn(other.transform.position);
+
+            _opacity += _opacityStep;
+            SetOpacity();
+
+            _meshRenderer.material.mainTexture = _displayedImage;
+        }
+    }
+
+    private IEnumerator MoveObjectsToTarget(IEnumerable<GameObject> objects, Transform target, float lerpDuration, float minWait, float maxWait)
+    {
+        List<GameObject> remaining = new List<GameObject>(objects);
+
+        while (remaining.Count > 0)
+        {
+            // Pick random object
+            GameObject obj = remaining[Random.Range(0, remaining.Count)];
+            remaining.Remove(obj);
+
+            // Disable navmesh
+            var nav = obj.GetComponent<NavMeshAgent>();
+            if (nav != null)  
+            { 
+                nav.isStopped = true;
+                nav.enabled = false; 
+            }
+            
+            // Add rigidbody for collision
+            var rb = obj.AddComponent<Rigidbody>();
+            rb.isKinematic = true; 
+            rb.useGravity = false;
+
+            // Lerp to target
+            Vector3 startPos = obj.transform.position;
+            float elapsed = 0f;
+            while (elapsed < lerpDuration)
+            {
+                elapsed += Time.deltaTime;
+                obj.transform.position = Vector3.Lerp(startPos, target.position, elapsed / lerpDuration);
+                yield return null;
+            }
+            obj.transform.position = target.position;
+
+            // Wait random time before next
+            if (remaining.Count > 0)
+                yield return new WaitForSeconds(Random.Range(minWait, maxWait));
+        }
+    }
+
     public void Spawn(Vector3 worldPosition)
     {
-        // Convert to local XZ (the mesh lies in the XZ plane by default)
         Vector3 local = transform.InverseTransformPoint(worldPosition);
         _ripples.Add(new RippleSource
         {
@@ -119,14 +197,11 @@ public class RippleCanvas : MonoBehaviour
         });
     }
 
-    /// <summary>Convenience overload — pass a 2D canvas coordinate directly.</summary>
     public void Spawn(Vector2 canvasPosition) =>
         Spawn(transform.TransformPoint(new Vector3(canvasPosition.x, 0f, canvasPosition.y)));
 
-    /// <summary>Spawns a ripple at the centre of the canvas.</summary>
     public void SpawnAtCenter() => Spawn(transform.position);
 
-    // ── Mesh construction ──────────────────────────────────────────────────
     private void BuildMesh()
     {
         _mesh = new Mesh { name = "RippleCanvas" };
@@ -174,7 +249,6 @@ public class RippleCanvas : MonoBehaviour
         _mesh.RecalculateNormals();
     }
 
-    // ── Per-frame displacement ─────────────────────────────────────────────
     private void DisplaceMesh()
     {
         float now = Time.time;
@@ -214,14 +288,26 @@ public class RippleCanvas : MonoBehaviour
 
         _mesh.vertices = _vertices;
         _mesh.RecalculateNormals();
-        GetComponent<MeshCollider>().sharedMesh = _mesh;
     }
 
-    // ── Housekeeping ───────────────────────────────────────────────────────
     private void PruneOldRipples()
     {
         float now = Time.time;
         _ripples.RemoveAll(r => now - r.birthTime > maxRippleAge);
+    }
+
+    private void SetOpacity()
+    {
+        Texture2D copy = new Texture2D(_originalImage.width, _originalImage.height, _originalImage.format, false);
+        Color[] pixels = _originalImage.GetPixels();
+
+        if (_opacity > 1.0f) _opacity = 1.0f;
+        for (int i = 0; i < pixels.Length; i++)
+            pixels[i] = Color.Lerp(Color.white, pixels[i], _opacity);
+        copy.SetPixels(pixels);
+        copy.Apply();
+
+        _displayedImage = copy;
     }
 }
 
